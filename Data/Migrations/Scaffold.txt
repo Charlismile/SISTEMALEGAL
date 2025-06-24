@@ -1,0 +1,1 @@
+﻿dotnet ef dbcontext scaffold "Name=ConnectionStrings:DefaultConnection" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models/Entities/BdSisLegal --context DbContextSisLegal --no-pluralize -t ApoderadoLegal -t JuntaInterventora -t MiembroComite -t RegistroAsociaciones -t RegistroComite -t RepresentanteLegal
