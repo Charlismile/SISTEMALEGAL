@@ -4,30 +4,41 @@ using Microsoft.EntityFrameworkCore;
 using SISTEMALEGAL.Components;
 using SISTEMALEGAL.Components.Account;
 using SISTEMALEGAL.Data;
+using SISTEMALEGAL.Models.Entities.BdSisLegal;
+using SISTEMALEGAL.Repositories.Implementations;
+using SISTEMALEGAL.Repositories.Interfaces;
+using SISTEMALEGAL.Repositories.Services;
+using SISTEMALEGAL.Services;
+using SistemaLegalBlazor.Repositories.Implementations;
+using SistemaLegalBlazor.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-
+builder.Services.AddScoped<ComiteService>();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-
+builder.Services.AddBlazorBootstrap();
+builder.Services.AddScoped<IComiteRepository, ComiteRepository>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
-
+builder.Services.AddScoped<IDatabaseProvider, DatabaseProviderService>();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddDbContext<DbContextSisLegal>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()

@@ -1,23 +1,32 @@
-﻿@inherits LayoutComponentBase
+﻿@using BlazorBootstrap
+@using SISTEMALEGAL.Repositories.Interfaces
+@inherits LayoutComponentBase
+@inject IDatabaseProvider DatabaseProviderService
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
+<header>
+    <div class="container">
+        <img src="images/logo-gob.png" class="img-fluid" alt="Gobierno Logo" style="height: 120px;">
     </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+    <NavMenu/>
+</header>
+<div class="py-3 px-2">
+    @if (IsDev)
+    {
+        <div class="alert alert-danger mx-5">
+            <p>IsDev: @IsDev</p>
+            <p>@Connection</p>
         </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+    }
+    @Body
 </div>
+<Toasts class="p-3" Placement="ToastsPlacement.TopRight" Delay="5000" AutoHide="true" />
+@code{
+    private bool IsDev { get; set; }
+    private string Connection { get; set; } = "";
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+    protected override void OnInitialized()
+    {
+        IsDev = DatabaseProviderService.GetEnvironment();
+        Connection = DatabaseProviderService.GetConnectionString();
+    }
+}

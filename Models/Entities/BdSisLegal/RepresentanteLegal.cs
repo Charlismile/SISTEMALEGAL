@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace SISTEMALEGAL.Models.Entities.BdSisLegal;
+
+public partial class RepresentanteLegal
+{
+    public int Id { get; set; }
+
+    public int RegistroAsociacionId { get; set; }
+
+    public string? Nombre { get; set; }
+
+    public string? Cedula { get; set; }
+
+    public string? Cargo { get; set; }
+
+    public string? Telefono { get; set; }
+
+    public string? Direccion { get; set; }
+
+    // Clave foránea
+    
+    // Relación inversa
+    public RegistroAsociaciones RegistroAsociaciones { get; set; }
+}
