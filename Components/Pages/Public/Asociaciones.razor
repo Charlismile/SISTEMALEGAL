@@ -1,0 +1,92 @@
+﻿@page "/asociaciones"
+@using SISTEMALEGAL.Models.DTOs
+@using System.Linq
+@using SISTEMALEGAL.Services.Interfaces
+@inject IAsociacionRepository AsociacionRepo
+@inject IJSRuntime JS
+@inject NavigationManager NavManager
+
+<PageTitle>Listado de Asociaciones</PageTitle>
+
+<h3 class="mb-4">Asociaciones Legales</h3>
+
+<div class="d-flex justify-content-between mb-3">
+    <a href="/registrar-asociacion" class="btn btn-success">Nueva Asociación</a>
+</div>
+
+@if (asociaciones == null)
+{
+    <p>Cargando datos...</p>
+}
+else if (!asociaciones.Any())
+{
+    <div class="alert alert-info">No hay asociaciones registradas aún.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Nombre de la Asociación</th>
+                    <th>Tomo / Folio / Asiento</th>
+                    <th>Actividad de Salud</th>
+                    <th>Fecha de Creación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in asociaciones)
+                {
+                    <tr>
+                        <td>@item.Asociacion</td>
+                        <td>
+                            Tomo: @item.Tomo <br />
+                            Folio: @item.Folio <br />
+                            Asiento: @item.Asiento
+                        </td>
+                        <td>@item.ActividadSalud</td>
+                        <td>@item.FechaCreacion?.ToShortDateString()</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-primary" @onclick="() => VerDetalles(item.Id)">Ver</button>
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => Editar(item.Id)">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger" @onclick="() => Eliminar(item.Id)">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<RegistroAsociacionDto> asociaciones = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        asociaciones = await AsociacionRepo.GetAllAsync();
+    }
+
+    private void VerDetalles(int id)
+    {
+        NavManager.NavigateTo($"/asociacion/{id}");
+    }
+
+    private void Editar(int id)
+    {
+        NavManager.NavigateTo($"/editar-asociacion/{id}");
+    }
+
+    private async Task Eliminar(int id)
+    {
+        bool confirmado = await JS.InvokeAsync<bool>("confirm", "¿Estás seguro de eliminar esta asociación?");
+        
+        if (confirmado)
+        {
+            await AsociacionRepo.DeleteAsync(id);
+            asociaciones.RemoveAll(a => a.Id == id);
+        }
+    }
+}

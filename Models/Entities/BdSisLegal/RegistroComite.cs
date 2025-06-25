@@ -27,6 +27,10 @@ public partial class RegistroComite
 
     public string? DocumentosAdjuntos { get; set; }
 
+    public string? Comunidad { get; set; }
+
+    public virtual ICollection<DocumentoAdjunto> DocumentoAdjunto { get; set; } = new List<DocumentoAdjunto>();
+
     public virtual ICollection<JuntaInterventora> JuntaInterventora { get; set; } = new List<JuntaInterventora>();
 
     public virtual ICollection<MiembroComite> MiembroComite { get; set; } = new List<MiembroComite>();

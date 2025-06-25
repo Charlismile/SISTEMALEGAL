@@ -19,8 +19,5 @@ public partial class RepresentanteLegal
 
     public string? Direccion { get; set; }
 
-    // Clave foránea
-    
-    // Relación inversa
-    public RegistroAsociaciones RegistroAsociaciones { get; set; }
+    public virtual RegistroAsociaciones RegistroAsociacion { get; set; } = null!;
 }

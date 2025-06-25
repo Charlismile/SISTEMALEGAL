@@ -1,0 +1,109 @@
+﻿@page "/comites"
+@using SISTEMALEGAL.Models.DTOs
+@using System.Linq
+@using SISTEMALEGAL.Services.Interfaces
+@inject IComiteRepository ComiteRepo
+@inject IJSRuntime JS
+@inject NavigationManager NavManager
+
+<PageTitle>Listado de Comités</PageTitle>
+
+<h3 class="mb-4">Listado de Comités</h3>
+
+<div class="d-flex justify-content-between mb-3">
+    <a href="/registrar-comite" class="btn btn-success">Nuevo Comité</a>
+</div>
+
+@if (comites == null)
+{
+    <p>Cargando datos...</p>
+}
+else if (!comites.Any())
+{
+    <div class="alert alert-info">No hay comités registrados aún.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Nombre del Comité</th>
+                    <th>Provincia</th>
+                    <th>Tipo de Trámite</th>
+                    <th>Fecha de Creación</th>
+                    <th>Miembros</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in comites)
+                {
+                    <tr>
+                        <td>@item.ComiteSalud</td>
+                        <td>@item.Provincia</td>
+                        <td>@item.TipoTramite</td>
+                        <td>@item.FechaCreacion?.ToShortDateString()</td>
+                        <td>
+                            @if (item.Miembros != null && item.Miembros.Count > 0)
+                            {
+                                <ul class="list-unstyled mb-0">
+                                    @foreach (var miembro in item.Miembros.Take(2))
+                                    {
+                                        <li><small>@miembro.Nombre (@miembro.Cargo)</small></li>
+                                    }
+                                    @if (item.Miembros.Count > 2)
+                                    {
+                                        <li><small>y @(item.Miembros.Count - 2) más...</small></li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <small class="text-muted">Sin miembros</small>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-primary" @onclick="() => VerDetalles(item.Id)">Ver</button>
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => Editar(item.Id)">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger" @onclick="() => Eliminar(item.Id)">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<ComiteDto> comites = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        comites = await ComiteRepo.GetAllAsync();
+    }
+
+    private void VerDetalles(int id)
+    {
+        NavManager.NavigateTo($"/comite/{id}");
+    }
+
+    private void Editar(int id)
+    {
+        NavManager.NavigateTo($"/editar-comite/{id}");
+    }
+
+    private async Task Eliminar(int id)
+    {
+        bool confirmado = await JS.InvokeAsync<bool>("confirm", "¿Estás seguro de eliminar este comité?");
+        
+        if (confirmado)
+        {
+            await ComiteRepo.DeleteAsync(id);
+            comites.RemoveAll(c => c.Id == id);
+            StateHasChanged(); // Opcional si no se actualiza automáticamente
+        }
+    }
+}

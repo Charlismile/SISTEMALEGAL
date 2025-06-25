@@ -17,6 +17,8 @@ public partial class DbContextSisLegal : DbContext
 
     public virtual DbSet<ApoderadoLegal> ApoderadoLegal { get; set; }
 
+    public virtual DbSet<DocumentoAdjunto> DocumentoAdjunto { get; set; }
+
     public virtual DbSet<JuntaInterventora> JuntaInterventora { get; set; }
 
     public virtual DbSet<MiembroComite> MiembroComite { get; set; }
@@ -43,10 +45,31 @@ public partial class DbContextSisLegal : DbContext
             entity.Property(e => e.Nombre).HasMaxLength(255);
             entity.Property(e => e.Telefono).HasMaxLength(20);
 
-            entity.HasOne(d => d.RegistroAsociaciones).WithMany(p => p.ApoderadoLegal)
+            entity.HasOne(d => d.RegistroAsociacion).WithMany(p => p.ApoderadoLegal)
                 .HasForeignKey(d => d.RegistroAsociacionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Apoderado__Regis__32E0915F");
+        });
+
+        modelBuilder.Entity<DocumentoAdjunto>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Document__3214EC0701C12FBD");
+
+            entity.Property(e => e.FechaSubida).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.NombreOriginal).HasMaxLength(255);
+            entity.Property(e => e.RutaArchivo).HasMaxLength(512);
+            entity.Property(e => e.TipoDocumento).HasMaxLength(100);
+            entity.Property(e => e.UsuarioId).HasMaxLength(450);
+
+            entity.HasOne(d => d.RegistroAsociacion).WithMany(p => p.DocumentoAdjunto)
+                .HasForeignKey(d => d.RegistroAsociacionId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK__Documento__Regis__4CA06362");
+
+            entity.HasOne(d => d.RegistroComite).WithMany(p => p.DocumentoAdjunto)
+                .HasForeignKey(d => d.RegistroComiteId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK__Documento__Regis__4BAC3F29");
         });
 
         modelBuilder.Entity<JuntaInterventora>(entity =>
@@ -82,7 +105,6 @@ public partial class DbContextSisLegal : DbContext
 
             entity.Property(e => e.ActividadSalud).HasMaxLength(255);
             entity.Property(e => e.Asociacion).HasMaxLength(255);
-            entity.Property(e => e.Folio).HasMaxLength(100);
         });
 
         modelBuilder.Entity<RegistroComite>(entity =>
@@ -90,6 +112,7 @@ public partial class DbContextSisLegal : DbContext
             entity.HasKey(e => e.Id).HasName("PK__Registro__3214EC07D0EAD7B0");
 
             entity.Property(e => e.ComiteSalud).HasMaxLength(255);
+            entity.Property(e => e.Comunidad).HasMaxLength(255);
             entity.Property(e => e.Corregimiento).HasMaxLength(255);
             entity.Property(e => e.Distrito).HasMaxLength(255);
             entity.Property(e => e.Provincia).HasMaxLength(255);
@@ -107,7 +130,7 @@ public partial class DbContextSisLegal : DbContext
             entity.Property(e => e.Nombre).HasMaxLength(255);
             entity.Property(e => e.Telefono).HasMaxLength(20);
 
-            entity.HasOne(d => d.RegistroAsociaciones).WithMany(p => p.RepresentanteLegal)
+            entity.HasOne(d => d.RegistroAsociacion).WithMany(p => p.RepresentanteLegal)
                 .HasForeignKey(d => d.RegistroAsociacionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Represent__Regis__300424B4");

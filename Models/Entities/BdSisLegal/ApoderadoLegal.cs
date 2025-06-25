@@ -25,7 +25,5 @@ public partial class ApoderadoLegal
 
     public string? FirmaAbogadosNombre { get; set; }
 
-    // Clave foránea
-    // Relación inversa
-    public RegistroAsociaciones RegistroAsociaciones { get; set; }
+    public virtual RegistroAsociaciones RegistroAsociacion { get; set; } = null!;
 }

@@ -1,0 +1,68 @@
+﻿@page "/editar-comite/{id:int}"
+@using SISTEMALEGAL.Models.DTOs
+@using SISTEMALEGAL.Services.Interfaces
+@inject IComiteRepository ComiteRepository
+@inject NavigationManager NavManager
+
+<PageTitle>Editar Comité</PageTitle>
+
+<h3>Editar Comité</h3>
+
+<EditForm Model="@comite" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label>Nombre del Comité</label>
+            <InputText @bind-Value="comite.ComiteSalud" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label>Provincia</label>
+            <InputText @bind-Value="comite.Provincia" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label>Tipo de Trámite</label>
+            <InputSelect @bind-Value="comite.TipoTramite" class="form-select">
+                <option value="">Selecciona</option>
+                <option value="Personería">Personería</option>
+                <option value="Cambio Junta Directiva">Cambio Junta Directiva</option>
+                <option value="Junta Interventora">Junta Interventora</option>
+            </InputSelect>
+        </div>
+        <div class="col-md-6">
+            <label>Fecha de Creación</label>
+            <InputDate @bind-Value="comite.FechaCreacion" class="form-control" />
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success me-2">Actualizar</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private ComiteDto comite = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        comite = await ComiteRepository.GetByIdAsync(Id) ?? new();
+        if (comite.Id == 0)
+        {
+            NavManager.NavigateTo("/comites");
+        }
+    }
+
+    private async Task Guardar()
+    {
+        await ComiteRepository.UpdateAsync(comite);
+        NavManager.NavigateTo("/comites");
+    }
+
+    private void Cancelar()
+    {
+        NavManager.NavigateTo("/comites");
+    }
+}

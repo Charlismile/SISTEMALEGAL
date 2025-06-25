@@ -2,14 +2,14 @@
 using System.Threading.Tasks;
 using SISTEMALEGAL.Models.DTOs;
 
-namespace SistemaLegalBlazor.Repositories.Interfaces
+namespace SISTEMALEGAL.Services.Interfaces
 {
     public interface IComiteRepository
     {
-        Task<List<ComiteDto>> GetAllComites();
-        Task<ComiteDto> GetComiteById(int id);
-        Task<int> CreateComite(ComiteDto dto);
-        Task UpdateComite(ComiteDto dto);
-        Task DeleteComite(int id);
+        Task<int> CreateAsync(ComiteDto dto);
+        Task UpdateAsync(ComiteDto dto);
+        Task DeleteAsync(int id);
+        Task<List<ComiteDto>> GetAllAsync();
+        Task<ComiteDto?> GetByIdAsync(int id);
     }
 }

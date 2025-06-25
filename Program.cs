@@ -9,8 +9,8 @@ using SISTEMALEGAL.Repositories.Implementations;
 using SISTEMALEGAL.Repositories.Interfaces;
 using SISTEMALEGAL.Repositories.Services;
 using SISTEMALEGAL.Services;
-using SistemaLegalBlazor.Repositories.Implementations;
-using SistemaLegalBlazor.Repositories.Interfaces;
+using SISTEMALEGAL.Services.Implementations;
+using SISTEMALEGAL.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +24,7 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddScoped<IComiteRepository, ComiteRepository>();
+builder.Services.AddScoped<IAsociacionRepository, AsociacionRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddAuthentication(options =>
     {

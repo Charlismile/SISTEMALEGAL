@@ -1,12 +1,12 @@
-﻿@page "/registrar-asociacion"
+﻿@page "/editar-asociacion/{id:int}"
 @using SISTEMALEGAL.Models.DTOs
 @using SISTEMALEGAL.Services.Interfaces
-@inject NavigationManager NavManager
 @inject IAsociacionRepository AsociacionRepository
+@inject NavigationManager NavManager
 
-<PageTitle>Registrar Asociación</PageTitle>
+<PageTitle>Editar Asociación</PageTitle>
 
-<h3>Registrar Asociación</h3>
+<h3>Editar Asociación</h3>
 
 <EditForm Model="@asociacion" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
@@ -17,25 +17,27 @@
             <label class="form-label">Nombre de la Asociación</label>
             <InputText @bind-Value="asociacion.Asociacion" class="form-control" />
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
             <label class="form-label">Tomo</label>
             <InputNumber @bind-Value="asociacion.Tomo" class="form-control" />
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
             <label class="form-label">Folio</label>
             <InputNumber @bind-Value="asociacion.Folio" class="form-control" />
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
             <label class="form-label">Asiento</label>
             <InputNumber @bind-Value="asociacion.Asiento" class="form-control" />
         </div>
-        <div class="col-md-12">
-            <label class="form-label">Actividad de Salud</label>
-            <InputText @bind-Value="asociacion.ActividadSalud" class="form-control" />
-        </div>
     </div>
 
-    <h5>Representante Legal</h5>
+    <div class="mb-3">
+        <label class="form-label">Actividad de Salud</label>
+        <InputText @bind-Value="asociacion.ActividadSalud" class="form-control" />
+    </div>
+
+    <!-- Representante Legal -->
+    <h5 class="mt-4">Representante Legal</h5>
     <div class="row g-3 mb-3">
         <div class="col-md-6">
             <InputText @bind-Value="asociacion.RepresentanteLegal.Nombre" placeholder="Nombre" class="form-control" />
@@ -54,7 +56,8 @@
         </div>
     </div>
 
-    <h5>Apoderado Legal</h5>
+    <!-- Apoderado Legal -->
+    <h5 class="mt-4">Apoderado Legal</h5>
     <div class="row g-3 mb-3">
         <div class="col-md-6">
             <InputText @bind-Value="asociacion.ApoderadoLegal.Nombre" placeholder="Nombre" class="form-control" />
@@ -79,34 +82,36 @@
             <InputText @bind-Value="asociacion.ApoderadoLegal.Direccion" placeholder="Dirección" class="form-control" />
         </div>
     </div>
-    <div class="text-end mt-4">
-        <button type="submit" class="btn btn-success">Guardar Asociación</button>
-        <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success me-2">Actualizar</button>
+        <button type="button" class="btn btn-secondary" @onclick="Volver">Cancelar</button>
     </div>
 </EditForm>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
+
     private RegistroAsociacionDto asociacion = new();
-    private List<InputFileChangeEventArgs> archivos = new();
-    
-    private void Cancelar()
+
+    protected override async Task OnInitializedAsync()
     {
-        asociacion = new();
-        NavManager.NavigateTo("/");
+        var dto = await AsociacionRepository.GetByIdAsync(Id);
+        if (dto != null)
+        {
+            asociacion = dto;
+        }
     }
 
     private async Task Guardar()
     {
-        await AsociacionRepository.CreateAsync(asociacion);
+        await AsociacionRepository.UpdateAsync(asociacion);
         NavManager.NavigateTo("/asociaciones");
     }
-    private void CargarArchivos(InputFileChangeEventArgs e)
-    {
-        foreach (var file in e.GetMultipleFiles())
-        {
-            archivos.Add(e);
-        }
 
-        // Aquí puedes guardar los archivos físicamente o en BD
+    private void Volver()
+    {
+        NavManager.NavigateTo("/asociaciones");
     }
 }

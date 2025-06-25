@@ -73,6 +73,7 @@ namespace SISTEMALEGAL.Services
             {
                 Id = r.Id,
                 ComiteSalud = r.ComiteSalud,
+                Comunidad = r.Comunidad,
                 Corregimiento = r.Corregimiento,
                 Distrito = r.Distrito,
                 Provincia = r.Provincia,
