@@ -1,0 +1,18 @@
+﻿@using SISTEMALEGAL.Models.DTOs
+@typeparam TMiembro
+
+<div class="row g-2 mb-2">
+    <div class="col-md-4">
+        <InputText @bind-Value="Miembro.Nombre" placeholder="Nombre" class="form-control" />
+    </div>
+    <div class="col-md-4">
+        <InputText @bind-Value="Miembro.Cedula" placeholder="Cédula" class="form-control" />
+    </div>
+    <div class="col-md-4">
+        <InputText @bind-Value="Miembro.Cargo" placeholder="Cargo" class="form-control" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public MiembroDto Miembro { get; set; }
+}

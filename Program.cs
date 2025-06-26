@@ -5,6 +5,7 @@ using SISTEMALEGAL.Components;
 using SISTEMALEGAL.Components.Account;
 using SISTEMALEGAL.Data;
 using SISTEMALEGAL.Models.Entities.BdSisLegal;
+using SISTEMALEGAL.Models.Entities.BDUbicaciones;
 using SISTEMALEGAL.Repositories.Implementations;
 using SISTEMALEGAL.Repositories.Interfaces;
 using SISTEMALEGAL.Repositories.Services;
@@ -17,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddScoped<IUbicacionService, UbicacionService>();
 builder.Services.AddScoped<ComiteService>();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -40,7 +42,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDbContext<DbContextSisLegal>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddDbContext<DbUbicacionPanama>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("UbicacionConnection")));
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()

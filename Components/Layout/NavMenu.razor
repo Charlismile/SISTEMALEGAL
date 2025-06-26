@@ -1,26 +1,39 @@
 ﻿@implements IDisposable
 @inject NavigationManager NavigationManager
 
-<div class="top-row ps-3 navbar navbar-dark bg-primary">
+<nav class="navbar navbar-expand-md navbar-dark bg-primary shadow-sm">
     <div class="container-fluid">
-        <img src="images/favicon.png" alt="logo" width="40px"/>
-        <a class="navbar-brand" href="/">SISTEMALEGAL</a>
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <img src="images/favicon.png" alt="Logo del Sistema Legal" width="40" class="me-2" />
+            SISTEMALEGAL
+        </a>
 
-        <!-- Menú de navegación adaptado -->
-        <nav class="d-flex justify-content-around  mt-2 mt-md-0 ms-md-auto text-white">
-            <NavLink class="nav-link" href="comites">
-                <span class="bi bi-list-ul" aria-hidden="true"></span> Comités
-            </NavLink>
-            <NavLink class="py-2 link-body-emphasis text-decoration-none" href="/Account/Login">
-                <i class="bi bi-box-arrow-in-right"></i>Asociaciones
-            </NavLink>
-            <NavLink class="py-2 link-body-emphasis text-decoration-none" href="/Account/Login">
-                <i class="bi bi-box-arrow-in-right"></i>Iniciar Sesion
-            </NavLink>
-        </nav>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="comites" Match="NavLinkMatch.All">
+                        <i class="bi bi-people-fill me-3"></i> Comités
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="asociaciones">
+                        <i class="bi bi-people me-3"></i> Asociaciones
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/Account/Login">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
+                    </NavLink>
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
-
+</nav>
 
 @code {
     private string? currentUrl;

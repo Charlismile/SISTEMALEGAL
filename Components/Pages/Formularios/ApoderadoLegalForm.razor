@@ -1,0 +1,31 @@
+﻿@using SISTEMALEGAL.Models.DTOs
+@typeparam TApoderado
+
+<div class="row g-3 mb-3">
+    <div class="col-md-6">
+        <InputText @bind-Value="Apoderado.Nombre" placeholder="Nombre" class="form-control" />
+    </div>
+    <div class="col-md-6">
+        <InputText @bind-Value="Apoderado.Cedula" placeholder="Cédula" class="form-control" />
+    </div>
+    <div class="col-md-6 mt-2">
+        <label class="form-label">¿Es firma de abogados?</label>
+        <InputCheckbox @bind-Value="Apoderado.EsFirmaAbogados" />
+    </div>
+    <div class="col-md-6 mt-2">
+        <InputText @bind-Value="Apoderado.FirmaAbogadosNombre" placeholder="Nombre de la firma (opcional)" class="form-control" />
+    </div>
+    <div class="col-md-6 mt-2">
+        <InputText @bind-Value="Apoderado.Email" placeholder="Correo electrónico" class="form-control" />
+    </div>
+    <div class="col-md-6 mt-2">
+        <InputText @bind-Value="Apoderado.Telefono" placeholder="Teléfono" class="form-control" />
+    </div>
+    <div class="col-md-12 mt-2">
+        <InputText @bind-Value="Apoderado.Direccion" placeholder="Dirección" class="form-control" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public ApoderadoLegalDto Apoderado { get; set; }
+}

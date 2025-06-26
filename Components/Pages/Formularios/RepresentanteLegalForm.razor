@@ -1,0 +1,24 @@
+﻿@using SISTEMALEGAL.Models.DTOs
+@typeparam TRepresentante
+
+<div class="row g-3 mb-3">
+    <div class="col-md-6">
+        <InputText @bind-Value="Representante.Nombre" placeholder="Nombre" class="form-control" />
+    </div>
+    <div class="col-md-6">
+        <InputText @bind-Value="Representante.Cedula" placeholder="Cédula" class="form-control" />
+    </div>
+    <div class="col-md-6">
+        <InputText @bind-Value="Representante.Cargo" placeholder="Cargo" class="form-control" />
+    </div>
+    <div class="col-md-6">
+        <InputText @bind-Value="Representante.Telefono" placeholder="Teléfono" class="form-control" />
+    </div>
+    <div class="col-md-12">
+        <InputText @bind-Value="Representante.Direccion" placeholder="Dirección" class="form-control" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public RepresentanteLegalDto Representante { get; set; }
+}

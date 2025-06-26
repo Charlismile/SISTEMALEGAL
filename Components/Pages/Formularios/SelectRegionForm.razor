@@ -1,0 +1,101 @@
+﻿@using SISTEMALEGAL.Models.DTOs
+@using SISTEMALEGAL.Models.Entities.BDUbicaciones
+@using SISTEMALEGAL.Services.Interfaces
+@inject IUbicacionService UbicacionService
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <label>Región de Salud</label>
+        <InputSelect @bind-Value="dto.RegionSaludId" @onchange="CargarProvincias">
+            <option value="">Seleccione...</option>
+            @foreach (var region in regiones)
+            {
+                <option value="@region.Id">@region.Nombre</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="col-md-3">
+        <label>Provincia</label>
+        <InputSelect @bind-Value="dto.ProvinciaId" @onchange="CargarDistritos">
+            <option value="">Seleccione...</option>
+            @foreach (var prov in provincias)
+            {
+                <option value="@prov.Id">@prov.Nombre</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="col-md-3">
+        <label>Distrito</label>
+        <InputSelect @bind-Value="dto.DistritoId" @onchange="CargarCorregimientos">
+            <option value="">Seleccione...</option>
+            @foreach (var distrito in distritos)
+            {
+                <option value="@distrito.Id">@distrito.Nombre</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="col-md-3">
+        <label>Corregimiento</label>
+        <InputSelect @bind-Value="dto.CorregimientoId">
+            <option value="">Seleccione...</option>
+            @foreach (var corr in corregimientos)
+            {
+                <option value="@corr.Id">@corr.Nombre</option>
+            }
+        </InputSelect>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public UbicacionDto dto { get; set; } = new();
+
+    private List<RegionSalud> regiones = new();
+    private List<Provincia> provincias = new();
+    private List<Distrito> distritos = new();
+    private List<Corregimiento> corregimientos = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        regiones = await UbicacionService.GetAllRegionesAsync();
+    }
+
+    private async Task CargarProvincias(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var regionId))
+        {
+            dto.RegionSaludId = regionId;
+            dto.RegionSalud = regiones.FirstOrDefault(r => r.Id == regionId)?.Nombre;
+
+            provincias = await UbicacionService.GetProvinciasByRegionAsync(regionId);
+            distritos.Clear();
+            corregimientos.Clear();
+        }
+    }
+
+    private async Task CargarDistritos(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var provinciaId))
+        {
+            dto.ProvinciaId = provinciaId;
+            dto.Provincia = provincias.FirstOrDefault(p => p.Id == provinciaId)?.Nombre;
+
+            distritos = await UbicacionService.GetDistritosByProvinciaAsync(provinciaId);
+            corregimientos.Clear();
+        }
+    }
+
+    private async Task CargarCorregimientos(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var distritoId))
+        {
+            dto.DistritoId = distritoId;
+            dto.Distrito = distritos.FirstOrDefault(d => d.Id == distritoId)?.Nombre;
+
+            corregimientos = await UbicacionService.GetCorregimientosByDistritoAsync(distritoId);
+        }
+    }
+}

@@ -2,117 +2,38 @@
 @using Microsoft.AspNetCore.Components.Web
 @using SISTEMALEGAL.Models.DTOs
 @using SISTEMALEGAL.Services.Interfaces
+@inject IComiteRepository ComiteRepo
+@inject IUbicacionService UbicacionService
 @inject NavigationManager NavManager
-@inject IComiteRepository comiteRepo
+
+<h3>Registrar Comité</h3>
+
 <EditForm Model="@comite" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <div class="mb-3">
-        <label>Nombre del Comité</label>
-        <InputText @bind-Value="comite.ComiteSalud" class="form-control" />
-        <ValidationMessage For="@(() => comite.ComiteSalud)" />
-    </div>
+    
+    <!-- Componente modular -->
+    <SelectRegionProvinciaDistritoCorregimiento dto="@ubicacion" />
 
     <div class="mb-3">
         <label>Tipo de Trámite</label>
-        <InputSelect @bind-Value="comite.TipoTramite" @onchange="OnTipoTramiteChanged" class="form-select">
-            <option value="">Seleccione...</option>
-            <option value="Personería">Personería</option>
-            <option value="Cambio Junta Directiva">Cambio Junta Directiva</option>
-            <option value="Junta Interventora">Junta Interventora</option>
-        </InputSelect>
+        <InputText @bind-Value="comite.TipoTramite" class="form-control" />
     </div>
 
-    <!-- Miembros -->
-    <h5>Miembros del Comité</h5>
-    @foreach (var miembro in comite.Miembros)
-    {
-        <div class="row g-2 mb-2">
-            <div class="col-md-4">
-                <InputText @bind-Value="miembro.Nombre" placeholder="Nombre" class="form-control" />
-            </div>
-            <div class="col-md-4">
-                <InputText @bind-Value="miembro.Cedula" placeholder="Cédula" class="form-control" />
-            </div>
-            <div class="col-md-4">
-                <InputText @bind-Value="miembro.Cargo" placeholder="Cargo" class="form-control" />
-            </div>
-        </div>
-    }
-
-    <button class="btn btn-outline-primary btn-sm mb-3" type="button" @onclick="AgregarMiembro">+ Agregar Miembro</button>
-
-    <!-- Junta Interventora -->
-    @if (comite.MostrarJunta)
-    {
-        <h5 class="text-warning mt-4">Junta Interventora (máximo 2)</h5>
-        @for (int i = 0; i < comite.JuntaInterventoras.Count; i++)
-        {
-            <div class="row g-2 mb-2">
-                <div class="col-md-6">
-                    <InputText @bind-Value="comite.JuntaInterventoras[i].Nombre" placeholder="Nombre" class="form-control" />
-                </div>
-                <div class="col-md-6">
-                    <InputText @bind-Value="comite.JuntaInterventoras[i].Cedula" placeholder="Cédula" class="form-control" />
-                </div>
-            </div>
-        }
-        <button class="btn btn-outline-warning btn-sm mb-3" type="button" @onclick="AgregarJunta">+ Agregar Interventor</button>
-    }
-
-    <div class="mt-4">
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
-    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
 </EditForm>
 
 @code {
     private ComiteDto comite = new();
-
-    private bool mostrarJunta;
-
-    protected override void OnInitialized()
-    {
-        if (comite.Miembros.Count == 0)
-            comite.Miembros.Add(new MiembroDto());
-    }
-
-    private void OnTipoTramiteChanged(ChangeEventArgs e)
-    {
-        comite.TipoTramite = e.Value?.ToString();
-
-        if (comite.TipoTramite == "Junta Interventora")
-        {
-            if (comite.JuntaInterventoras.Count == 0)
-                comite.JuntaInterventoras.Add(new JuntaInterventoraDto());
-        }
-        else
-        {
-            comite.JuntaInterventoras.Clear();
-        }
-    }
-
-    private void AgregarMiembro()
-    {
-        if (comite.Miembros.Count < 7)
-            comite.Miembros.Add(new MiembroDto());
-    }
-
-    private void AgregarJunta()
-    {
-        if (comite.JuntaInterventoras.Count < 2)
-            comite.JuntaInterventoras.Add(new JuntaInterventoraDto());
-    }
+    private UbicacionDto ubicacion = new();
 
     private async Task Guardar()
     {
-        await comiteRepo.CreateAsync(comite);
-        NavManager.NavigateTo("/comites");
-    }
+        comite.RegionSalud = ubicacion.RegionSalud;
+        comite.Provincia = ubicacion.Provincia;
+        comite.Distrito = ubicacion.Distrito;
+        comite.Corregimiento = ubicacion.Corregimiento;
 
-    private void Cancelar()
-    {
-        NavManager.NavigateTo("/comites");
+        var id = await ComiteRepo.CreateAsync(comite);
+        NavManager.NavigateTo($"/comite/{id}");
     }
 }

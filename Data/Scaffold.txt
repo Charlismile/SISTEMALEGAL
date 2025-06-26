@@ -1,1 +1,3 @@
 ﻿dotnet ef dbcontext scaffold "Name=ConnectionStrings:DefaultConnection" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models/Entities/BdSisLegal --context DbContextSisLegal --no-pluralize -t ApoderadoLegal -t JuntaInterventora -t MiembroComite -t RegistroAsociaciones -t RegistroComite -t RepresentanteLegal -t DocumentoAdjunto --force
+
+dotnet ef dbcontext scaffold "Name=ConnectionStrings:UbicacionConnection" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models/Entities/BDUbicaciones --context DbUbicacionPanama --no-pluralize -t RegionSalud -t Provincia -t Distrito -t Corregimiento

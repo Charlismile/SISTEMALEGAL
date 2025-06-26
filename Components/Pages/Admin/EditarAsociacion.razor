@@ -6,102 +6,108 @@
 
 <PageTitle>Editar Asociación</PageTitle>
 
-<h3>Editar Asociación</h3>
+<div class="container py-5">
+    <div class="mx-auto col-lg-10">
+        <div class="card shadow rounded-4">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4 text-primary">Editar Asociación</h3>
 
-<EditForm Model="@asociacion" OnValidSubmit="Guardar">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+                <EditForm Model="@asociacion" OnValidSubmit="Guardar">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
-    <div class="row g-3 mb-3">
-        <div class="col-md-6">
-            <label class="form-label">Nombre de la Asociación</label>
-            <InputText @bind-Value="asociacion.Asociacion" class="form-control" />
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">Tomo</label>
-            <InputNumber @bind-Value="asociacion.Tomo" class="form-control" />
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">Folio</label>
-            <InputNumber @bind-Value="asociacion.Folio" class="form-control" />
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">Asiento</label>
-            <InputNumber @bind-Value="asociacion.Asiento" class="form-control" />
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre de la Asociación</label>
+                            <InputText @bind-Value="asociacion.Asociacion" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Tomo</label>
+                            <InputNumber @bind-Value="asociacion.Tomo" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Folio</label>
+                            <InputNumber @bind-Value="asociacion.Folio" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Asiento</label>
+                            <InputNumber @bind-Value="asociacion.Asiento" class="form-control" />
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Actividad de Salud</label>
+                            <InputText @bind-Value="asociacion.ActividadSalud" class="form-control" />
+                        </div>
+                    </div>
+
+                    <!-- Representante Legal -->
+                    <h5 class="mt-4 text-success">Representante Legal</h5>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <InputText @bind-Value="asociacion.RepresentanteLegal.Nombre" placeholder="Nombre" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <InputText @bind-Value="asociacion.RepresentanteLegal.Cedula" placeholder="Cédula" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <InputText @bind-Value="asociacion.RepresentanteLegal.Cargo" placeholder="Cargo" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <InputText @bind-Value="asociacion.RepresentanteLegal.Telefono" placeholder="Teléfono" class="form-control" />
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <InputText @bind-Value="asociacion.RepresentanteLegal.Direccion" placeholder="Dirección" class="form-control" />
+                        </div>
+                    </div>
+
+                    <!-- Apoderado Legal -->
+                    <h5 class="mt-4 text-info">Apoderado Legal</h5>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <InputText @bind-Value="asociacion.ApoderadoLegal.Nombre" placeholder="Nombre" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <InputText @bind-Value="asociacion.ApoderadoLegal.Cedula" placeholder="Cédula" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label class="form-label d-block">¿Es firma de abogados?</label>
+                            <InputCheckbox @bind-Value="asociacion.ApoderadoLegal.EsFirmaAbogados" class="form-check-input me-2" />
+                            <label class="form-check-label">Sí</label>
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <InputText @bind-Value="asociacion.ApoderadoLegal.FirmaAbogadosNombre" placeholder="Nombre de la firma (opcional)" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <InputText @bind-Value="asociacion.ApoderadoLegal.Email" placeholder="Correo electrónico" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <InputText @bind-Value="asociacion.ApoderadoLegal.Telefono" placeholder="Teléfono" class="form-control" />
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <InputText @bind-Value="asociacion.ApoderadoLegal.Direccion" placeholder="Dirección" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-success me-2">Actualizar</button>
+                        <button type="button" class="btn btn-secondary" @onclick="Volver">Cancelar</button>
+                    </div>
+                </EditForm>
+            </div>
         </div>
     </div>
-
-    <div class="mb-3">
-        <label class="form-label">Actividad de Salud</label>
-        <InputText @bind-Value="asociacion.ActividadSalud" class="form-control" />
-    </div>
-
-    <!-- Representante Legal -->
-    <h5 class="mt-4">Representante Legal</h5>
-    <div class="row g-3 mb-3">
-        <div class="col-md-6">
-            <InputText @bind-Value="asociacion.RepresentanteLegal.Nombre" placeholder="Nombre" class="form-control" />
-        </div>
-        <div class="col-md-6">
-            <InputText @bind-Value="asociacion.RepresentanteLegal.Cedula" placeholder="Cédula" class="form-control" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <InputText @bind-Value="asociacion.RepresentanteLegal.Cargo" placeholder="Cargo" class="form-control" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <InputText @bind-Value="asociacion.RepresentanteLegal.Telefono" placeholder="Teléfono" class="form-control" />
-        </div>
-        <div class="col-md-12 mt-2">
-            <InputText @bind-Value="asociacion.RepresentanteLegal.Direccion" placeholder="Dirección" class="form-control" />
-        </div>
-    </div>
-
-    <!-- Apoderado Legal -->
-    <h5 class="mt-4">Apoderado Legal</h5>
-    <div class="row g-3 mb-3">
-        <div class="col-md-6">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.Nombre" placeholder="Nombre" class="form-control" />
-        </div>
-        <div class="col-md-6">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.Cedula" placeholder="Cédula" class="form-control" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <label>¿Es firma de abogados?</label>
-            <InputCheckbox @bind-Value="asociacion.ApoderadoLegal.EsFirmaAbogados" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.FirmaAbogadosNombre" placeholder="Nombre de la firma (opcional)" class="form-control" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.Email" placeholder="Correo electrónico" class="form-control" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.Telefono" placeholder="Teléfono" class="form-control" />
-        </div>
-        <div class="col-md-12 mt-2">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.Direccion" placeholder="Dirección" class="form-control" />
-        </div>
-    </div>
-
-    <div class="mt-4">
-        <button type="submit" class="btn btn-success me-2">Actualizar</button>
-        <button type="button" class="btn btn-secondary" @onclick="Volver">Cancelar</button>
-    </div>
-</EditForm>
+</div>
 
 @code {
-    [Parameter]
-    public int Id { get; set; }
-
+    [Parameter] public int Id { get; set; }
     private RegistroAsociacionDto asociacion = new();
 
     protected override async Task OnInitializedAsync()
     {
         var dto = await AsociacionRepository.GetByIdAsync(Id);
-        if (dto != null)
-        {
+        if (dto is not null)
             asociacion = dto;
-        }
+        else
+            NavManager.NavigateTo("/asociaciones");
     }
 
     private async Task Guardar()
@@ -110,8 +116,5 @@
         NavManager.NavigateTo("/asociaciones");
     }
 
-    private void Volver()
-    {
-        NavManager.NavigateTo("/asociaciones");
-    }
+    private void Volver() => NavManager.NavigateTo("/asociaciones");
 }

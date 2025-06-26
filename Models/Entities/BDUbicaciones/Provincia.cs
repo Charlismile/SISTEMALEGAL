@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace SISTEMALEGAL.Models.Entities.BDUbicaciones;
+
+public partial class Provincia
+{
+    public int Id { get; set; }
+
+    public int CodigoProvincia { get; set; }
+
+    public string Nombre { get; set; } = null!;
+
+    public int RegionSaludId { get; set; }
+
+    public virtual ICollection<Distrito> Distrito { get; set; } = new List<Distrito>();
+
+    public virtual RegionSalud RegionSalud { get; set; } = null!;
+}

@@ -12,10 +12,14 @@ namespace SISTEMALEGAL.Models.Extensions
             {
                 Id = dto.Id,
                 ComiteSalud = dto.ComiteSalud,
-                Corregimiento = dto.Corregimiento,
-                Distrito = dto.Distrito,
-                Provincia = dto.Provincia,
+
+                // Campos de ubicación
                 RegionSalud = dto.RegionSalud,
+                Provincia = dto.Provincia,
+                Distrito = dto.Distrito,
+                Corregimiento = dto.Corregimiento,
+
+                // Datos adicionales
                 TipoTramite = dto.TipoTramite,
                 FechaEleccion = dto.FechaEleccion,
                 FechaCreacion = dto.FechaCreacion,

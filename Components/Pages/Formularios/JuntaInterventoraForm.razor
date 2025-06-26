@@ -1,0 +1,14 @@
+﻿@using SISTEMALEGAL.Models.DTOs
+
+<div class="row g-2 mb-2">
+    <div class="col-md-6">
+        <InputText @bind-Value="Interventor.Nombre" placeholder="Nombre" class="form-control" />
+    </div>
+    <div class="col-md-6">
+        <InputText @bind-Value="Interventor.Cedula" placeholder="Cédula" class="form-control" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public JuntaInterventoraDto Interventor { get; set; }
+}

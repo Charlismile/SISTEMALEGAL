@@ -6,89 +6,56 @@
 
 <PageTitle>Registrar Asociación</PageTitle>
 
-<h3>Registrar Asociación</h3>
+<div class="container py-5">
+    <div class="mx-auto col-lg-8">
+        <h2 class="text-center mb-4 text-primary">Registro de Asociación</h2>
 
-<EditForm Model="@asociacion" OnValidSubmit="Guardar">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+        <EditForm Model="@asociacion" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
 
-    <div class="row g-3 mb-3">
-        <div class="col-md-6">
-            <label class="form-label">Nombre de la Asociación</label>
-            <InputText @bind-Value="asociacion.Asociacion" class="form-control" />
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Tomo</label>
-            <InputNumber @bind-Value="asociacion.Tomo" class="form-control" />
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Folio</label>
-            <InputNumber @bind-Value="asociacion.Folio" class="form-control" />
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Asiento</label>
-            <InputNumber @bind-Value="asociacion.Asiento" class="form-control" />
-        </div>
-        <div class="col-md-12">
-            <label class="form-label">Actividad de Salud</label>
-            <InputText @bind-Value="asociacion.ActividadSalud" class="form-control" />
-        </div>
-    </div>
+            <div class="row g-3 mb-4">
+                <div class="col-md-12">
+                    <label class="form-label">Nombre de la Asociación</label>
+                    <InputText @bind-Value="asociacion.Asociacion" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tomo</label>
+                    <InputNumber @bind-Value="asociacion.Tomo" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Folio</label>
+                    <InputNumber @bind-Value="asociacion.Folio" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Asiento</label>
+                    <InputNumber @bind-Value="asociacion.Asiento" class="form-control" />
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Actividad de Salud</label>
+                    <InputText @bind-Value="asociacion.ActividadSalud" class="form-control" />
+                </div>
+            </div>
 
-    <h5>Representante Legal</h5>
-    <div class="row g-3 mb-3">
-        <div class="col-md-6">
-            <InputText @bind-Value="asociacion.RepresentanteLegal.Nombre" placeholder="Nombre" class="form-control" />
-        </div>
-        <div class="col-md-6">
-            <InputText @bind-Value="asociacion.RepresentanteLegal.Cedula" placeholder="Cédula" class="form-control" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <InputText @bind-Value="asociacion.RepresentanteLegal.Cargo" placeholder="Cargo" class="form-control" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <InputText @bind-Value="asociacion.RepresentanteLegal.Telefono" placeholder="Teléfono" class="form-control" />
-        </div>
-        <div class="col-md-12 mt-2">
-            <InputText @bind-Value="asociacion.RepresentanteLegal.Direccion" placeholder="Dirección" class="form-control" />
-        </div>
-    </div>
+            <hr />
+            <h5 class="text-success">Representante Legal</h5>
+            <RepresentanteLegalForm TRepresentante="RepresentanteLegalDto" Representante="asociacion.RepresentanteLegal" />
 
-    <h5>Apoderado Legal</h5>
-    <div class="row g-3 mb-3">
-        <div class="col-md-6">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.Nombre" placeholder="Nombre" class="form-control" />
-        </div>
-        <div class="col-md-6">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.Cedula" placeholder="Cédula" class="form-control" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <label>¿Es firma de abogados?</label>
-            <InputCheckbox @bind-Value="asociacion.ApoderadoLegal.EsFirmaAbogados" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.FirmaAbogadosNombre" placeholder="Nombre de la firma (opcional)" class="form-control" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.Email" placeholder="Correo electrónico" class="form-control" />
-        </div>
-        <div class="col-md-6 mt-2">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.Telefono" placeholder="Teléfono" class="form-control" />
-        </div>
-        <div class="col-md-12 mt-2">
-            <InputText @bind-Value="asociacion.ApoderadoLegal.Direccion" placeholder="Dirección" class="form-control" />
-        </div>
+            <hr />
+            <h5 class="text-warning">Apoderado Legal</h5>
+            <ApoderadoLegalForm TApoderado="ApoderadoLegalDto" Apoderado="asociacion.ApoderadoLegal" />
+
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-success">Guardar Asociación</button>
+                <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
+            </div>
+        </EditForm>
     </div>
-    <div class="text-end mt-4">
-        <button type="submit" class="btn btn-success">Guardar Asociación</button>
-        <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
-    </div>
-</EditForm>
+</div>
 
 @code {
     private RegistroAsociacionDto asociacion = new();
-    private List<InputFileChangeEventArgs> archivos = new();
-    
+
     private void Cancelar()
     {
         asociacion = new();
@@ -99,14 +66,5 @@
     {
         await AsociacionRepository.CreateAsync(asociacion);
         NavManager.NavigateTo("/asociaciones");
-    }
-    private void CargarArchivos(InputFileChangeEventArgs e)
-    {
-        foreach (var file in e.GetMultipleFiles())
-        {
-            archivos.Add(e);
-        }
-
-        // Aquí puedes guardar los archivos físicamente o en BD
     }
 }

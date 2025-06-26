@@ -7,12 +7,13 @@ namespace SISTEMALEGAL.Models.DTOs
         public int Id { get; set; }
 
         [Required(ErrorMessage = "El nombre del comité es obligatorio")]
-        public string? ComiteSalud { get; set; } // 👈 Aquí usas ComiteSalud, no Nombre
+        public string? ComiteSalud { get; set; }
 
-        public string? Corregimiento { get; set; }
-        public string? Distrito { get; set; }
-        public string? Provincia { get; set; }
         public string? RegionSalud { get; set; }
+        public string? Provincia { get; set; }
+        public string? Distrito { get; set; }
+        public string? Corregimiento { get; set; }
+
         public string? TipoTramite { get; set; }
         public DateTime? FechaEleccion { get; set; }
         public DateTime? FechaCreacion { get; set; }
@@ -23,7 +24,6 @@ namespace SISTEMALEGAL.Models.DTOs
 
         public bool MostrarJunta => TipoTramite == "Junta Interventora";
     }
-
     public class MiembroDto
     {
         public int Id { get; set; }

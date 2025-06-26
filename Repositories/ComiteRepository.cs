@@ -97,9 +97,19 @@ namespace SISTEMALEGAL.Services.Implementations
 
         public async Task<int> CreateAsync(ComiteDto dto)
         {
-            var entity = dto.ToEntity();
+            var entity = new RegistroComite
+            {
+                ComiteSalud = dto.ComiteSalud,
+                Corregimiento = dto.Corregimiento,
+                Distrito = dto.Distrito,
+                Provincia = dto.Provincia,
+                RegionSalud = dto.RegionSalud,
+                
+            };
+
             await _context.RegistroComite.AddAsync(entity);
             await _context.SaveChangesAsync();
+
             return entity.Id;
         }
 
