@@ -6,21 +6,89 @@
 @inject IUbicacionService UbicacionService
 @inject NavigationManager NavManager
 
-<h3>Registrar Comité</h3>
+<PageTitle>Registrar Comité</PageTitle>
 
-<EditForm Model="@comite" OnValidSubmit="Guardar">
-    <DataAnnotationsValidator />
-    
-    <!-- Componente modular -->
-    <SelectRegionProvinciaDistritoCorregimiento dto="@ubicacion" />
+<div class="container mt-4 mb-5">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h4 class="mb-0">Registro de Comité de Salud</h4>
+        </div>
+        <div class="card-body">
+            <EditForm Model="@comite" OnValidSubmit="Guardar">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
 
-    <div class="mb-3">
-        <label>Tipo de Trámite</label>
-        <InputText @bind-Value="comite.TipoTramite" class="form-control" />
+                <!-- Sección de Ubicación -->
+                <fieldset class="mb-4">
+                    <legend class="fs-5 fw-semibold border-bottom pb-2">Ubicación Geográfica</legend>
+                    <SelectRegionForm dto="@ubicacion" />
+                </fieldset>
+
+                <!-- Datos del Comité -->
+                <fieldset class="mb-4">
+                    <legend class="fs-5 fw-semibold border-bottom pb-2">Datos del Comité</legend>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del Comité</label>
+                        <InputText @bind-Value="comite.ComiteSalud" class="form-control" />
+                        <ValidationMessage For="@(() => comite.ComiteSalud)" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de Creación</label>
+                        <InputDate @bind-Value="comite.FechaCreacion" class="form-control" />
+                        <ValidationMessage For="@(() => comite.FechaCreacion)" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Trámite</label>
+                        <InputSelect @bind-Value="comite.TipoTramite" class="form-select">
+                            <option value="">Seleccione...</option>
+                            <option value="Personería">Personería</option>
+                            <option value="Cambio Junta Directiva">Cambio Junta Directiva</option>
+                            <option value="Junta Interventora">Junta Interventora</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => comite.TipoTramite)" class="text-danger" />
+                    </div>
+
+                    @if (comite.TipoTramite == "Cambio Junta Directiva")
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Fecha de Elección</label>
+                            <InputDate @bind-Value="comite.FechaEleccion" class="form-control" />
+                            <ValidationMessage For="@(() => comite.FechaEleccion)" class="text-danger" />
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label class="form-label">Comunidad</label>
+                        <InputText @bind-Value="comite.Comunidad" class="form-control" />
+                        <ValidationMessage For="@(() => comite.Comunidad)" class="text-danger" />
+                    </div>
+                </fieldset>
+
+                <!-- Sección de Miembros -->
+                <fieldset class="mb-4">
+                    <legend class="fs-5 fw-semibold border-bottom pb-2">Miembros del Comité</legend>
+                    <ComiteMiembroForm miembros="@comite.Miembros" />
+                </fieldset>
+
+                <!-- Sección de Junta Interventora -->
+                @if (comite.MostrarJunta)
+                {
+                    <fieldset class="mb-4">
+                        <legend class="fs-5 fw-semibold border-bottom pb-2">Junta Interventora</legend>
+                        <JuntaInterventoraForm juntas="@comite.JuntaInterventoras" />
+                    </fieldset>
+                }
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success px-4">Guardar Comité</button>
+                </div>
+            </EditForm>
+        </div>
     </div>
-
-    <button type="submit" class="btn btn-success">Guardar</button>
-</EditForm>
+</div>
 
 @code {
     private ComiteDto comite = new();
@@ -32,6 +100,17 @@
         comite.Provincia = ubicacion.Provincia;
         comite.Distrito = ubicacion.Distrito;
         comite.Corregimiento = ubicacion.Corregimiento;
+
+        if (!comite.FechaCreacion.HasValue)
+        {
+            // Aquí podrías mostrar un modal o una alerta visual
+            return;
+        }
+
+        if (comite.TipoTramite == "Cambio Junta Directiva" && !comite.FechaEleccion.HasValue)
+        {
+            return;
+        }
 
         var id = await ComiteRepo.CreateAsync(comite);
         NavManager.NavigateTo($"/comite/{id}");

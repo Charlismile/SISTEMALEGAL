@@ -12,26 +12,33 @@ namespace SISTEMALEGAL.Models.Extensions
             {
                 Id = dto.Id,
                 ComiteSalud = dto.ComiteSalud,
-
-                // Campos de ubicación
-                RegionSalud = dto.RegionSalud,
                 Provincia = dto.Provincia,
                 Distrito = dto.Distrito,
                 Corregimiento = dto.Corregimiento,
 
-                // Datos adicionales
-                TipoTramite = dto.TipoTramite,
-                FechaEleccion = dto.FechaEleccion,
-                FechaCreacion = dto.FechaCreacion,
-                Comunidad = dto.Comunidad,
+                MiembroComite = dto.Miembros.Select(m => m.ToEntity()).ToList(),
+                JuntaInterventora = dto.JuntaInterventoras.Select(j => j.ToEntity()).ToList(),
 
-                MiembroComite = dto.Miembros?
-                    .Select(m => m.ToEntity())
-                    .ToList() ?? new List<MiembroComite>(),
+                // ✅ Ahora sí puedes asignar listas
+                DocumentoAdjunto = dto.DocumentosAdjuntos?.Select(d => d.ToEntity()).ToList() ?? new List<DocumentoAdjunto>()
+            };
+        }
 
-                JuntaInterventora = dto.JuntaInterventoras?
-                    .Select(j => j.ToEntity())
-                    .ToList() ?? new List<JuntaInterventora>()
+        public static ComiteDto ToDto(this RegistroComite entity)
+        {
+            return new ComiteDto
+            {
+                Id = entity.Id,
+                ComiteSalud = entity.ComiteSalud,
+                Provincia = entity.Provincia,
+                Distrito = entity.Distrito,
+                Corregimiento = entity.Corregimiento,
+
+                Miembros = entity.MiembroComite?.Select(m => m.ToDto()).ToList() ?? new(),
+                JuntaInterventoras = entity.JuntaInterventora?.Select(j => j.ToDto()).ToList() ?? new(),
+        
+                // ✅ Mapea correctamente desde entidad a DTO
+                DocumentosAdjuntos = entity.DocumentoAdjunto?.Select(d => d.ToDto()).ToList() ?? new()
             };
         }
 
@@ -45,6 +52,17 @@ namespace SISTEMALEGAL.Models.Extensions
                 Cargo = dto.Cargo
             };
         }
+        
+        public static MiembroDto ToDto(this MiembroComite entity)
+        {
+            return new MiembroDto
+            {
+                Id = entity.Id,
+                Nombre = entity.Nombre,
+                Cedula = entity.Cedula,
+                Cargo = entity.Cargo
+            };
+        }
 
         public static JuntaInterventora ToEntity(this JuntaInterventoraDto dto)
         {
@@ -53,6 +71,16 @@ namespace SISTEMALEGAL.Models.Extensions
                 Id = dto.Id,
                 Nombre = dto.Nombre,
                 Cedula = dto.Cedula
+            };
+        }
+
+        public static JuntaInterventoraDto ToDto(this JuntaInterventora entity)
+        {
+            return new JuntaInterventoraDto
+            {
+                Id = entity.Id,
+                Nombre = entity.Nombre,
+                Cedula = entity.Cedula
             };
         }
 
@@ -126,7 +154,7 @@ namespace SISTEMALEGAL.Models.Extensions
                 RegistroAsociacionId = dto.RegistroAsociacionId
             };
         }
-        
+
         public static DocumentoAdjuntoDto ToDto(this DocumentoAdjunto entity)
         {
             return new DocumentoAdjuntoDto
@@ -136,8 +164,7 @@ namespace SISTEMALEGAL.Models.Extensions
                 RutaArchivo = entity.RutaArchivo,
                 TipoDocumento = entity.TipoDocumento,
                 FechaSubida = entity.FechaSubida,
-                RegistroComiteId = entity.RegistroComiteId,
-                RegistroAsociacionId = entity.RegistroAsociacionId
+                RegistroComiteId = entity.RegistroComiteId
             };
         }
     }

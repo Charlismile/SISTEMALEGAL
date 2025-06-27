@@ -108,5 +108,22 @@ namespace SISTEMALEGAL.Services.Implementations
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task SubirDocumentoResolucionAsync(DocumentoAdjuntoDto dto)
+        {
+            var entidad = new DocumentoAdjunto
+            {
+                NombreOriginal = dto.NombreOriginal,
+                RutaArchivo = dto.RutaArchivo,
+                TipoDocumento = dto.TipoDocumento,
+                FechaSubida = dto.FechaSubida,
+                UsuarioId = dto.UsuarioId,
+                RegistroAsociacionId = dto.RegistroAsociacionId,
+                RegistroComiteId = null // explícitamente nulo ya que es para asociación
+            };
+
+            await _context.DocumentoAdjunto.AddAsync(entidad);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

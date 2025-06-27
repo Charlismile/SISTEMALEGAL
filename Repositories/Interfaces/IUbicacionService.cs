@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using SISTEMALEGAL.Models.Entities.BDUbicaciones;
+﻿using System.Threading.Tasks;
+using SISTEMALEGAL.Models.DTOs;
 
 namespace SISTEMALEGAL.Services.Interfaces
 {
     public interface IUbicacionService
     {
-        Task<List<RegionSalud>> GetAllRegionesAsync();
-        Task<List<Provincia>> GetProvinciasByRegionAsync(int regionId);
-        Task<List<Distrito>> GetDistritosByProvinciaAsync(int provinciaId);
-        Task<List<Corregimiento>> GetCorregimientosByDistritoAsync(int distritoId);
+        Task<List<RegionSaludDto>> GetAllRegionesAsync();
+        Task<List<ProvinciaDto>> GetProvinciasByRegionAsync(int regionId);
+        Task<List<DistritoDto>> GetDistritosByProvinciaAsync(int provinciaId);
+        Task<List<CorregimientoDto>> GetCorregimientosByDistritoAsync(int distritoId);
     }
 }

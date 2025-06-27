@@ -1,15 +1,22 @@
-﻿namespace SISTEMALEGAL.Models.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class DocumentoAdjuntoDto
+namespace SISTEMALEGAL.Models.DTOs
 {
-    public int Id { get; set; }
-    public string NombreOriginal { get; set; } = string.Empty;
-    public string RutaArchivo { get; set; } = string.Empty;
-    public string? TipoDocumento { get; set; }
-    public DateTime FechaSubida { get; set; }
-    public string? UsuarioId { get; set; }
+    public class DocumentoAdjuntoDto
+    {
+        public int Id { get; set; }
 
-    // Opcional: Solo uno puede estar presente
-    public int? RegistroComiteId { get; set; }
-    public int? RegistroAsociacionId { get; set; }
+        [Required(ErrorMessage = "Debe seleccionar al menos un archivo")]
+        public string NombreOriginal { get; set; } = string.Empty;
+
+        [Required]
+        public string RutaArchivo { get; set; } = string.Empty;
+
+        public string? TipoDocumento { get; set; }
+        public DateTime FechaSubida { get; set; } = DateTime.Now;
+        public string? UsuarioId { get; set; }
+
+        public int? RegistroComiteId { get; set; }
+        public int? RegistroAsociacionId { get; set; }
+    }
 }

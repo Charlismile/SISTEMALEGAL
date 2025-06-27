@@ -15,8 +15,6 @@ public partial class RegistroAsociaciones
 
     public DateTime? FechaCreacion { get; set; }
 
-    public string? DocumentosAdjuntos { get; set; }
-
     public int? Tomo { get; set; }
 
     public int? Folio { get; set; }

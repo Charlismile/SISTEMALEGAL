@@ -11,5 +11,7 @@ namespace SISTEMALEGAL.Services.Interfaces
         Task DeleteAsync(int id);
         Task<List<ComiteDto>> GetAllAsync();
         Task<ComiteDto?> GetByIdAsync(int id);
+        Task SubirDocumentoResolucionAsync(DocumentoAdjuntoDto documento);
+
     }
 }

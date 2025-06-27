@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using SISTEMALEGAL.Models.DTOs
+@using System.IO
+
+<div class="mb-3">
+    <label class="form-label">Cargar Documentos Adjuntos</label>
+    <InputFile OnChange="CargarArchivos" multiple />
+</div>
+
+@if (archivos.Any())
+{
+    <div class="mb-3">
+        <ul class="list-group">
+            @foreach (var archivo in archivos)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>@archivo.Name (@(archivo.Size / 1024) KB)</span>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public List<DocumentoAdjuntoDto> DocumentosAdjuntos { get; set; } = new();
+
+    private List<IBrowserFile> archivos = new();
+
+    private async Task CargarArchivos(InputFileChangeEventArgs e)
+    {
+        foreach (var archivo in e.GetMultipleFiles())
+        {
+            var nombreUnico = Guid.NewGuid().ToString() + Path.GetExtension(archivo.Name);
+            var rutaCarpeta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "archivos", "asociaciones");
+
+            if (!Directory.Exists(rutaCarpeta))
+                Directory.CreateDirectory(rutaCarpeta);
+
+            var rutaCompleta = Path.Combine(rutaCarpeta, nombreUnico);
+
+            await using var stream = new FileStream(rutaCompleta, FileMode.Create);
+            await archivo.OpenReadStream().CopyToAsync(stream);
+
+            archivos.Add(archivo);
+            DocumentosAdjuntos.Add(new DocumentoAdjuntoDto
+            {
+                NombreOriginal = archivo.Name,
+                RutaArchivo = "/archivos/asociaciones/" + nombreUnico,
+                TipoDocumento = "Resolución",
+                FechaSubida = DateTime.Now
+            });
+        }
+    }
+}

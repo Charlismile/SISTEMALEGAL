@@ -25,8 +25,6 @@ public partial class RegistroComite
 
     public DateTime? FechaCreacion { get; set; }
 
-    public string? DocumentosAdjuntos { get; set; }
-
     public string? Comunidad { get; set; }
 
     public virtual ICollection<DocumentoAdjunto> DocumentoAdjunto { get; set; } = new List<DocumentoAdjunto>();

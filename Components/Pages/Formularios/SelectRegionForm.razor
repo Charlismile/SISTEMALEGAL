@@ -1,9 +1,9 @@
-﻿@using SISTEMALEGAL.Models.DTOs
-@using SISTEMALEGAL.Models.Entities.BDUbicaciones
+﻿@using Microsoft.AspNetCore.Components.Web
 @using SISTEMALEGAL.Services.Interfaces
-@inject IUbicacionService UbicacionService
 
-<div class="row g-3">
+@using SISTEMALEGAL.Models.DTOs
+
+<div class="row g-3 mb-3">
     <div class="col-md-3">
         <label>Región de Salud</label>
         <InputSelect @bind-Value="dto.RegionSaludId" @onchange="CargarProvincias">
@@ -19,9 +19,9 @@
         <label>Provincia</label>
         <InputSelect @bind-Value="dto.ProvinciaId" @onchange="CargarDistritos">
             <option value="">Seleccione...</option>
-            @foreach (var prov in provincias)
+            @foreach (var provincia in provincias)
             {
-                <option value="@prov.Id">@prov.Nombre</option>
+                <option value="@provincia.Id">@provincia.Nombre</option>
             }
         </InputSelect>
     </div>
@@ -53,10 +53,13 @@
     [Parameter]
     public UbicacionDto dto { get; set; } = new();
 
-    private List<RegionSalud> regiones = new();
-    private List<Provincia> provincias = new();
-    private List<Distrito> distritos = new();
-    private List<Corregimiento> corregimientos = new();
+    [Inject]
+    private IUbicacionService UbicacionService { get; set; }
+
+    private List<RegionSaludDto> regiones = new();
+    private List<ProvinciaDto> provincias = new();
+    private List<DistritoDto> distritos = new();
+    private List<CorregimientoDto> corregimientos = new();
 
     protected override async Task OnInitializedAsync()
     {

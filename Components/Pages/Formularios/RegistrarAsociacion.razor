@@ -14,40 +14,85 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" />
 
-            <div class="row g-3 mb-4">
-                <div class="col-md-12">
-                    <label class="form-label">Nombre de la Asociación</label>
-                    <InputText @bind-Value="asociacion.Asociacion" class="form-control" />
+            <!-- Datos Generales -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    Datos Generales
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label">Tomo</label>
-                    <InputNumber @bind-Value="asociacion.Tomo" class="form-control" />
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Folio</label>
-                    <InputNumber @bind-Value="asociacion.Folio" class="form-control" />
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Asiento</label>
-                    <InputNumber @bind-Value="asociacion.Asiento" class="form-control" />
-                </div>
-                <div class="col-md-12">
-                    <label class="form-label">Actividad de Salud</label>
-                    <InputText @bind-Value="asociacion.ActividadSalud" class="form-control" />
+                <div class="card-body row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Nombre de la Asociación</label>
+                        <InputText @bind-Value="asociacion.Asociacion" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Tomo</label>
+                        <InputNumber @bind-Value="asociacion.Tomo" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Folio</label>
+                        <InputNumber @bind-Value="asociacion.Folio" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Asiento</label>
+                        <InputNumber @bind-Value="asociacion.Asiento" class="form-control" />
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Actividad de Salud</label>
+                        <InputText @bind-Value="asociacion.ActividadSalud" class="form-control" />
+                    </div>
                 </div>
             </div>
 
-            <hr />
-            <h5 class="text-success">Representante Legal</h5>
-            <RepresentanteLegalForm TRepresentante="RepresentanteLegalDto" Representante="asociacion.RepresentanteLegal" />
+            <!-- Representante Legal -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    Representante Legal
+                </div>
+                <div class="card-body">
+                    <RepresentanteLegalForm TRepresentante="RepresentanteLegalDto" Representante="asociacion.RepresentanteLegal" />
+                </div>
+            </div>
 
-            <hr />
-            <h5 class="text-warning">Apoderado Legal</h5>
-            <ApoderadoLegalForm TApoderado="ApoderadoLegalDto" Apoderado="asociacion.ApoderadoLegal" />
+            <!-- Apoderado Legal -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    Apoderado Legal
+                </div>
+                <div class="card-body">
+                    <ApoderadoLegalForm TApoderado="ApoderadoLegalDto" Apoderado="asociacion.ApoderadoLegal" />
+                </div>
+            </div>
 
+            <!-- Resolución Adjunta -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-dark">
+                    Resolución Adjunta
+                </div>
+                <div class="card-body">
+                    <CargarDocumentosForm OnArchivoSubido="AgregarArchivoResolucion" />
+                    @if (documentosResolucion.Any())
+                    {
+                        <ul class="list-group mt-3">
+                            @foreach (var doc in documentosResolucion)
+                            {
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-paperclip me-2"></i>
+                                    <a href="@doc.RutaArchivo" target="_blank">@doc.NombreOriginal</a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+
+            <!-- Botones -->
             <div class="text-end mt-4">
-                <button type="submit" class="btn btn-success">Guardar Asociación</button>
-                <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i> Guardar Asociación
+                </button>
+                <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">
+                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                </button>
             </div>
         </EditForm>
     </div>
@@ -55,16 +100,31 @@
 
 @code {
     private RegistroAsociacionDto asociacion = new();
+    private List<DocumentoAdjuntoDto> documentosResolucion = new();
+
+    private async Task Guardar()
+    {
+        var id = await AsociacionRepository.CreateAsync(asociacion);
+
+        foreach (var doc in documentosResolucion)
+        {
+            doc.RegistroAsociacionId = id;
+            await AsociacionRepository.SubirDocumentoResolucionAsync(doc);
+        }
+
+        NavManager.NavigateTo("/asociaciones");
+    }
+
+    private Task AgregarArchivoResolucion(DocumentoAdjuntoDto archivo)
+    {
+        documentosResolucion.Add(archivo);
+        return Task.CompletedTask;
+    }
 
     private void Cancelar()
     {
         asociacion = new();
+        documentosResolucion.Clear();
         NavManager.NavigateTo("/");
-    }
-
-    private async Task Guardar()
-    {
-        await AsociacionRepository.CreateAsync(asociacion);
-        NavManager.NavigateTo("/asociaciones");
     }
 }

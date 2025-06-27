@@ -10,5 +10,8 @@ namespace SISTEMALEGAL.Services.Interfaces
         Task<int> CreateAsync(RegistroAsociacionDto dto);
         Task UpdateAsync(RegistroAsociacionDto dto);
         Task DeleteAsync(int id);
+
+        // Nuevo método
+        Task SubirDocumentoResolucionAsync(DocumentoAdjuntoDto documento);
     }
 }

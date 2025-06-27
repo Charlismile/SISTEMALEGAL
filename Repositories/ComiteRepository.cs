@@ -100,11 +100,13 @@ namespace SISTEMALEGAL.Services.Implementations
             var entity = new RegistroComite
             {
                 ComiteSalud = dto.ComiteSalud,
-                Corregimiento = dto.Corregimiento,
-                Distrito = dto.Distrito,
                 Provincia = dto.Provincia,
-                RegionSalud = dto.RegionSalud,
-                
+                Distrito = dto.Distrito,
+                Corregimiento = dto.Corregimiento,
+
+                MiembroComite = dto.Miembros.Select(m => m.ToEntity()).ToList(),
+                JuntaInterventora = dto.JuntaInterventoras.Select(j => j.ToEntity()).ToList(),
+                DocumentoAdjunto = dto.DocumentosAdjuntos.Select(d => d.ToEntity()).ToList()
             };
 
             await _context.RegistroComite.AddAsync(entity);
@@ -128,8 +130,8 @@ namespace SISTEMALEGAL.Services.Implementations
             entity.Provincia = dto.Provincia;
             entity.RegionSalud = dto.RegionSalud;
             entity.TipoTramite = dto.TipoTramite;
-            entity.FechaEleccion = dto.FechaEleccion;
-            entity.FechaCreacion = dto.FechaCreacion;
+            // entity.FechaEleccion = dto.FechaEleccion;
+            // entity.FechaCreacion = dto.FechaCreacion;
             entity.Comunidad = dto.Comunidad;
 
             // Reemplazar miembros
@@ -170,5 +172,22 @@ namespace SISTEMALEGAL.Services.Implementations
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task SubirDocumentoResolucionAsync(DocumentoAdjuntoDto documento)
+        {
+            var entidad = new DocumentoAdjunto
+            {
+                NombreOriginal = documento.NombreOriginal,
+                RutaArchivo = documento.RutaArchivo,
+                TipoDocumento = documento.TipoDocumento,
+                FechaSubida = documento.FechaSubida,
+                UsuarioId = documento.UsuarioId,
+                RegistroComiteId = documento.RegistroComiteId,
+                RegistroAsociacionId = documento.RegistroAsociacionId
+            };
+
+            await _context.DocumentoAdjunto.AddAsync(entidad);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

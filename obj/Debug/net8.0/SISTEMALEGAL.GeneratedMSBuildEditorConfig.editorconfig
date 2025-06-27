@@ -202,6 +202,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xGb3JtdWxhcmlvc1xBcG9kZXJhZG9MZWdhbEZvcm0ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/cabernalo/Documents/PROJECT GIT/SISTEMALEGAL/SISTEMALEGAL/Components/Pages/Formularios/CargarDocumentosForm.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xGb3JtdWxhcmlvc1xDYXJnYXJEb2N1bWVudG9zRm9ybS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/cabernalo/Documents/PROJECT GIT/SISTEMALEGAL/SISTEMALEGAL/Components/Pages/Formularios/ComiteMiembroForm.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xGb3JtdWxhcmlvc1xDb21pdGVNaWVtYnJvRm9ybS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
