@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SISTEMALEGAL.Models.DTOs;
 using SISTEMALEGAL.Models.Entities.BdSisLegal;
-using SISTEMALEGAL.Services.Interfaces;
 using SISTEMALEGAL.Models.Extensions;
+using SISTEMALEGAL.Services.Interfaces;
 
 namespace SISTEMALEGAL.Services.Implementations
 {
@@ -17,20 +17,12 @@ namespace SISTEMALEGAL.Services.Implementations
 
         public async Task<List<RegistroAsociacionDto>> GetAllAsync()
         {
-            var registros = await _context.RegistroAsociaciones.ToListAsync();
+            var registros = await _context.RegistroAsociaciones
+                .Include(r => r.RepresentanteLegal)
+                .Include(r => r.ApoderadoLegal)
+                .ToListAsync();
 
-            return registros.Select(r => new RegistroAsociacionDto
-            {
-                Id = r.Id,
-                Asociacion = r.Asociacion,
-                Tomo = r.Tomo,
-                Folio = r.Folio,
-                Asiento = r.Asiento,
-                ActividadSalud = r.ActividadSalud,
-                Resolucion = r.Resolucion,
-                FechaCreacion = r.FechaCreacion,
-                
-            }).ToList();
+            return registros.Select(r => r.ToDto()).ToList();
         }
 
         public async Task<RegistroAsociacionDto?> GetByIdAsync(int id)
@@ -38,38 +30,26 @@ namespace SISTEMALEGAL.Services.Implementations
             var registro = await _context.RegistroAsociaciones
                 .Include(r => r.RepresentanteLegal)
                 .Include(r => r.ApoderadoLegal)
-                .FirstOrDefaultAsync(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.RegistroAsociacionId == id);
 
-            if (registro == null) return null;
-
-            return new RegistroAsociacionDto
-            {
-                Id = registro.Id,
-                Asociacion = registro.Asociacion,
-                Tomo = registro.Tomo,
-                Folio = registro.Folio,
-                Asiento = registro.Asiento,
-                ActividadSalud = registro.ActividadSalud,
-                Resolucion = registro.Resolucion,
-                FechaCreacion = registro.FechaCreacion,
-                
-            };
+            return registro?.ToDto();
         }
 
         public async Task<int> CreateAsync(RegistroAsociacionDto dto)
-{
-    var entity = dto.ToEntity();
-    await _context.RegistroAsociaciones.AddAsync(entity);
-    await _context.SaveChangesAsync();
-    return entity.Id;
-}
+        {
+            var entity = dto.ToEntity();
+            await _context.RegistroAsociaciones.AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity.RegistroAsociacionId;
+        }
 
         public async Task UpdateAsync(RegistroAsociacionDto dto)
         {
             var entity = await _context.RegistroAsociaciones
                 .Include(r => r.RepresentanteLegal)
                 .Include(r => r.ApoderadoLegal)
-                .FirstOrDefaultAsync(r => r.Id == dto.Id);
+                .Include(r => r.DocumentoAdjunto)
+                .FirstOrDefaultAsync(r => r.RegistroAsociacionId == dto.Id);
 
             if (entity == null) throw new Exception("Asociación no encontrada");
 
@@ -82,48 +62,62 @@ namespace SISTEMALEGAL.Services.Implementations
             entity.Resolucion = dto.Resolucion;
             entity.FechaCreacion = dto.FechaCreacion;
 
-            // Actualizar representante legal (uno o varios)
-            if (entity.RepresentanteLegal is not null)
+            // Eliminar relaciones anteriores
+            if (entity.RepresentanteLegal?.Any() == true)
+            {
                 _context.RepresentanteLegal.RemoveRange(entity.RepresentanteLegal);
-    
-            if (dto.RepresentanteLegal != null)
-                entity.RepresentanteLegal.Add(dto.RepresentanteLegal.ToEntity());
+            }
 
-            // Actualizar apoderado legal (uno o varios)
-            if (entity.ApoderadoLegal is not null)
+            if (entity.ApoderadoLegal?.Any() == true)
+            {
                 _context.ApoderadoLegal.RemoveRange(entity.ApoderadoLegal);
+            }
+
+            if (entity.DocumentoAdjunto?.Any() == true)
+            {
+                _context.DocumentoAdjunto.RemoveRange(entity.DocumentoAdjunto);
+            }
+
+            // Agregar nuevas relaciones
+            if (dto.RepresentanteLegal != null)
+            {
+                entity.RepresentanteLegal.Add(dto.RepresentanteLegal.ToEntity());
+            }
 
             if (dto.ApoderadoLegal != null)
+            {
                 entity.ApoderadoLegal.Add(dto.ApoderadoLegal.ToEntity());
-    
+            }
+
+            foreach (var doc in dto.DocumentosAdjuntos)
+            {
+                entity.DocumentoAdjunto.Add(doc.ToEntity());
+            }
+
             await _context.SaveChangesAsync();
         }
-
         public async Task DeleteAsync(int id)
         {
-            var entity = await _context.RegistroAsociaciones.FindAsync(id);
+            var entity = await _context.RegistroAsociaciones
+                .Include(r => r.RepresentanteLegal)
+                .Include(r => r.ApoderadoLegal)
+                .Include(r => r.DocumentoAdjunto)
+                .FirstOrDefaultAsync(r => r.RegistroAsociacionId == id);
+
             if (entity != null)
             {
+                if (entity.RepresentanteLegal?.Any() == true)
+                    _context.RepresentanteLegal.RemoveRange(entity.RepresentanteLegal);
+
+                if (entity.ApoderadoLegal?.Any() == true)
+                    _context.ApoderadoLegal.RemoveRange(entity.ApoderadoLegal);
+
+                if (entity.DocumentoAdjunto?.Any() == true)
+                    _context.DocumentoAdjunto.RemoveRange(entity.DocumentoAdjunto);
+
                 _context.RegistroAsociaciones.Remove(entity);
                 await _context.SaveChangesAsync();
             }
         }
-        public async Task SubirDocumentoResolucionAsync(DocumentoAdjuntoDto dto)
-        {
-            var entidad = new DocumentoAdjunto
-            {
-                NombreOriginal = dto.NombreOriginal,
-                RutaArchivo = dto.RutaArchivo,
-                TipoDocumento = dto.TipoDocumento,
-                FechaSubida = dto.FechaSubida,
-                UsuarioId = dto.UsuarioId,
-                RegistroAsociacionId = dto.RegistroAsociacionId,
-                RegistroComiteId = null // explícitamente nulo ya que es para asociación
-            };
-
-            await _context.DocumentoAdjunto.AddAsync(entidad);
-            await _context.SaveChangesAsync();
-        }
-
     }
 }

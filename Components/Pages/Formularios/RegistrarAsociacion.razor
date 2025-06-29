@@ -1,130 +1,206 @@
 ﻿@page "/registrar-asociacion"
+@using Microsoft.AspNetCore.Components.Web
+@using SISTEMALEGAL.Components.Layout
 @using SISTEMALEGAL.Models.DTOs
 @using SISTEMALEGAL.Services.Interfaces
+@inject IAsociacionRepository AsociacionRepo
+@inject IUbicacionService UbicacionService
 @inject NavigationManager NavManager
-@inject IAsociacionRepository AsociacionRepository
+@layout EmptyLayout
 
-<PageTitle>Registrar Asociación</PageTitle>
+<PageTitle>Nueva Asociación</PageTitle>
 
-<div class="container py-5">
-    <div class="mx-auto col-lg-8">
-        <h2 class="text-center mb-4 text-primary">Registro de Asociación</h2>
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-success text-white rounded-top">
+            <h4 class="mb-0">Registro de Asociación</h4>
+        </div>
+        <div class="card-body">
 
-        <EditForm Model="@asociacion" OnValidSubmit="Guardar">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" />
+            <EditForm Model="@dto" OnValidSubmit="Guardar">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
-            <!-- Datos Generales -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    Datos Generales
-                </div>
-                <div class="card-body row g-3">
-                    <div class="col-md-12">
+                <!-- Datos básicos -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
                         <label class="form-label">Nombre de la Asociación</label>
-                        <InputText @bind-Value="asociacion.Asociacion" class="form-control" />
+                        <InputText @bind-Value="dto.Asociacion" class="form-control" />
+                        <ValidationMessage For="@(() => dto.Asociacion)" />
                     </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Actividad de Salud</label>
+                        <InputText @bind-Value="dto.ActividadSalud" class="form-control" />
+                    </div>
+                </div>
+
+                <!-- Selección geográfica -->
+                <SelectRegionForm dto="@ubicacion" />
+
+                <!-- Información adicional -->
+                <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label">Tomo</label>
-                        <InputNumber @bind-Value="asociacion.Tomo" class="form-control" />
+                        <InputNumber @bind-Value="dto.Tomo" class="form-control" />
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Folio</label>
-                        <InputNumber @bind-Value="asociacion.Folio" class="form-control" />
+                        <InputNumber @bind-Value="dto.Folio" class="form-control" />
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Asiento</label>
-                        <InputNumber @bind-Value="asociacion.Asiento" class="form-control" />
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Actividad de Salud</label>
-                        <InputText @bind-Value="asociacion.ActividadSalud" class="form-control" />
+                        <InputNumber @bind-Value="dto.Asiento" class="form-control" />
                     </div>
                 </div>
-            </div>
 
-            <!-- Representante Legal -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-success text-white">
-                    Representante Legal
+                <!-- Resolución -->
+                <div class="mb-3">
+                    <label class="form-label">Resolución</label>
+                    <InputTextArea @bind-Value="dto.Resolucion" class="form-control" rows="3" />
                 </div>
-                <div class="card-body">
-                    <RepresentanteLegalForm TRepresentante="RepresentanteLegalDto" Representante="asociacion.RepresentanteLegal" />
-                </div>
-            </div>
 
-            <!-- Apoderado Legal -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-warning text-dark">
-                    Apoderado Legal
+                <!-- Fecha de creación -->
+                <div class="mb-3">
+                    <label class="form-label">Fecha de Creación</label>
+                    <InputDate @bind-Value="dto.FechaCreacion" class="form-control" />
+                    <ValidationMessage For="@(() => dto.FechaCreacion)" />
                 </div>
-                <div class="card-body">
-                    <ApoderadoLegalForm TApoderado="ApoderadoLegalDto" Apoderado="asociacion.ApoderadoLegal" />
-                </div>
-            </div>
 
-            <!-- Resolución Adjunta -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-info text-dark">
-                    Resolución Adjunta
+                <!-- Representante Legal -->
+                <div class="card mt-3 mb-3">
+                    <div class="card-header bg-info text-white">Representante Legal</div>
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <InputText @bind-Value="dto.RepresentanteLegal.Nombre" placeholder="Nombre" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <InputText @bind-Value="dto.RepresentanteLegal.Cedula" placeholder="Cédula" class="form-control" />
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <InputText @bind-Value="dto.RepresentanteLegal.Cargo" placeholder="Cargo" class="form-control" />
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <InputText @bind-Value="dto.RepresentanteLegal.Telefono" placeholder="Teléfono" class="form-control" />
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <InputText @bind-Value="dto.RepresentanteLegal.Direccion" placeholder="Dirección" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <CargarDocumentosForm OnArchivoSubido="AgregarArchivoResolucion" />
-                    @if (documentosResolucion.Any())
+
+                <!-- Apoderado Legal -->
+                <div class="card mt-3 mb-3">
+                    <div class="card-header bg-warning text-dark">Apoderado Legal</div>
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <InputText @bind-Value="dto.ApoderadoLegal.Nombre" placeholder="Nombre" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <InputText @bind-Value="dto.ApoderadoLegal.Cedula" placeholder="Cédula" class="form-control" />
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <InputText @bind-Value="dto.ApoderadoLegal.Email" placeholder="Email" class="form-control" />
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <InputText @bind-Value="dto.ApoderadoLegal.Telefono" placeholder="Teléfono" class="form-control" />
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <InputText @bind-Value="dto.ApoderadoLegal.Direccion" placeholder="Dirección" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cargar resolución -->
+                <div class="mb-3">
+                    <label>Cargar Resolución</label>
+                    <InputFile multiple OnChange="CargarArchivos" />
+
+                    @if (archivos.Any())
                     {
-                        <ul class="list-group mt-3">
-                            @foreach (var doc in documentosResolucion)
+                        <ul class="mt-2 list-group list-group-flush">
+                            @foreach (var file in archivos)
                             {
-                                <li class="list-group-item d-flex align-items-center">
-                                    <i class="bi bi-paperclip me-2"></i>
-                                    <a href="@doc.RutaArchivo" target="_blank">@doc.NombreOriginal</a>
-                                </li>
+                                <li class="list-group-item">@file.Name (@file.Size KB)</li>
                             }
                         </ul>
                     }
                 </div>
-            </div>
 
-            <!-- Botones -->
-            <div class="text-end mt-4">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle me-1"></i> Guardar Asociación
-                </button>
-                <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">
-                    <i class="bi bi-x-circle me-1"></i> Cancelar
-                </button>
-            </div>
-        </EditForm>
+                <!-- Botón de guardar -->
+                <button type="submit" class="btn btn-success mt-3">Guardar Asociación</button>
+                <button type="button" class="btn btn-secondary ms-2 mt-3" @onclick="LimpiarCampos">Limpiar</button>
+            </EditForm>
+        </div>
+    </div>
+    <div>
+        <button type="button" class="btn btn-secondary me-2" @onclick="Regresar">Regresar</button>
     </div>
 </div>
 
 @code {
-    private RegistroAsociacionDto asociacion = new();
-    private List<DocumentoAdjuntoDto> documentosResolucion = new();
+    private RegistroAsociacionDto dto = new()
+    {
+        RepresentanteLegal = new RepresentanteLegalDto(),
+        ApoderadoLegal = new ApoderadoLegalDto()
+    };
+    private UbicacionDto ubicacion = new();
+    private List<IBrowserFile> archivos = new();
+
+    protected override void OnInitialized()
+    {
+        // Si es edición, puedes cargar aquí desde el repositorio
+    }
+
+    private async Task CargarArchivos(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            var nombreUnico = Guid.NewGuid() + Path.GetExtension(file.Name);
+            var rutaRelativa = $"/archivos/asociaciones/resoluciones/{nombreUnico}";
+            var fullPath = Path.Combine("wwwroot", "archivos", "asociaciones", "resoluciones", nombreUnico);
+
+            using var stream = new FileStream(fullPath, FileMode.Create);
+            await file.OpenReadStream().CopyToAsync(stream);
+
+            dto.DocumentosAdjuntos.Add(new DocumentoAdjuntoDto
+            {
+                NombreOriginal = file.Name,
+                RutaArchivo = rutaRelativa,
+                TipoDocumento = "Resolución",
+                FechaSubida = DateTime.Now
+            });
+        }
+    }
 
     private async Task Guardar()
     {
-        var id = await AsociacionRepository.CreateAsync(asociacion);
+        // Asigna valores geográficos desde el componente
+        dto.RegionSalud = ubicacion.RegionSalud;
+        dto.Provincia = ubicacion.Provincia;
+        dto.Distrito = ubicacion.Distrito;
+        dto.Corregimiento = ubicacion.Corregimiento;
 
-        foreach (var doc in documentosResolucion)
+        if (!dto.FechaCreacion.HasValue)
         {
-            doc.RegistroAsociacionId = id;
-            await AsociacionRepository.SubirDocumentoResolucionAsync(doc);
+            // Muestra mensaje de error si la fecha es obligatoria
+            return;
         }
 
+        await AsociacionRepo.CreateAsync(dto);
         NavManager.NavigateTo("/asociaciones");
     }
 
-    private Task AgregarArchivoResolucion(DocumentoAdjuntoDto archivo)
+    private void LimpiarCampos()
     {
-        documentosResolucion.Add(archivo);
-        return Task.CompletedTask;
+        dto = new();
+        ubicacion = new();
     }
-
-    private void Cancelar()
+    private void Regresar()
     {
-        asociacion = new();
-        documentosResolucion.Clear();
         NavManager.NavigateTo("/");
     }
 }

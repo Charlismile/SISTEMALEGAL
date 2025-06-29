@@ -5,7 +5,7 @@ namespace SISTEMALEGAL.Models.Entities.BDUbicaciones;
 
 public partial class Provincia
 {
-    public int Id { get; set; }
+    public int ProvinciaId { get; set; }
 
     public int CodigoProvincia { get; set; }
 

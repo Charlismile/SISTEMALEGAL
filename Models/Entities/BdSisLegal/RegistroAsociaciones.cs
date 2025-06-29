@@ -5,9 +5,9 @@ namespace SISTEMALEGAL.Models.Entities.BdSisLegal;
 
 public partial class RegistroAsociaciones
 {
-    public int Id { get; set; }
+    public int RegistroAsociacionId { get; set; }
 
-    public string? Asociacion { get; set; }
+    public string Asociacion { get; set; } = null!;
 
     public string? ActividadSalud { get; set; }
 

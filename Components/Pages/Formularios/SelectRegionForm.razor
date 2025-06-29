@@ -1,104 +1,137 @@
-﻿@using Microsoft.AspNetCore.Components.Web
+﻿@using SISTEMALEGAL.Models.DTOs
 @using SISTEMALEGAL.Services.Interfaces
 
-@using SISTEMALEGAL.Models.DTOs
-
 <div class="row g-3 mb-3">
+    <!-- Región -->
     <div class="col-md-3">
-        <label>Región de Salud</label>
-        <InputSelect @bind-Value="dto.RegionSaludId" @onchange="CargarProvincias">
-            <option value="">Seleccione...</option>
-            @foreach (var region in regiones)
+        <label class="form-label">Región de Salud</label>
+        <InputSelect class="form-select form-select-sm"
+                     Value="@Dto.RegionSaludId"
+                     ValueChanged="@(async (int? id) => await OnRegionChanged(id))"
+                     ValueExpression="@(() => Dto.RegionSaludId)">
+            <option value="">--Seleccione--</option>
+            @foreach (var r in RegionesList)
             {
-                <option value="@region.Id">@region.Nombre</option>
+                <option value="@r.RegionSaludId">@r.Nombre</option>
             }
         </InputSelect>
+        <ValidationMessage For="@(() => Dto.RegionSaludId)" />
     </div>
 
+    <!-- Provincia -->
     <div class="col-md-3">
-        <label>Provincia</label>
-        <InputSelect @bind-Value="dto.ProvinciaId" @onchange="CargarDistritos">
-            <option value="">Seleccione...</option>
-            @foreach (var provincia in provincias)
+        <label class="form-label">Provincia</label>
+        <InputSelect class="form-select form-select-sm"
+                     Value="@Dto.ProvinciaId"
+                     ValueChanged="@(async (int? id) => await OnProvinciaChanged(id))"
+                     ValueExpression="@(() => Dto.ProvinciaId)">
+            <option value="0">--Seleccione--</option>
+            @foreach (var p in ProvinciasList)
             {
-                <option value="@provincia.Id">@provincia.Nombre</option>
+                <option value="@p.ProvinciaId">@p.Nombre</option>
             }
         </InputSelect>
+        <ValidationMessage For="@(() => Dto.ProvinciaId)" />
     </div>
 
+    <!-- Distrito -->
     <div class="col-md-3">
-        <label>Distrito</label>
-        <InputSelect @bind-Value="dto.DistritoId" @onchange="CargarCorregimientos">
-            <option value="">Seleccione...</option>
-            @foreach (var distrito in distritos)
+        <label class="form-label">Distrito</label>
+        <InputSelect class="form-select form-select-sm"
+                     Value="@Dto.DistritoId"
+                     ValueChanged="@(async (int? id) => await OnDistritoChanged(id))"
+                     ValueExpression="@(() => Dto.DistritoId)">
+            <option value="0">--Seleccione--</option>
+            @foreach (var d in DistritosList)
             {
-                <option value="@distrito.Id">@distrito.Nombre</option>
+                <option value="@d.DistritoId">@d.Nombre</option>
             }
         </InputSelect>
+        <ValidationMessage For="@(() => Dto.DistritoId)" />
     </div>
 
+    <!-- Corregimiento -->
     <div class="col-md-3">
-        <label>Corregimiento</label>
-        <InputSelect @bind-Value="dto.CorregimientoId">
-            <option value="">Seleccione...</option>
-            @foreach (var corr in corregimientos)
+        <label class="form-label">Corregimiento</label>
+        <InputSelect class="form-select form-select-sm"
+                     Value="@Dto.CorregimientoId"
+                     ValueChanged="@(async (int? id) => await OnCorregimientoChanged(id))"
+                     ValueExpression="@(() => Dto.CorregimientoId)">
+            <option value="0">--Seleccione--</option>
+            @foreach (var c in CorregimientosList)
             {
-                <option value="@corr.Id">@corr.Nombre</option>
+                <option value="@c.CorregimientoId">@c.Nombre</option>
             }
         </InputSelect>
+        <ValidationMessage For="@(() => Dto.CorregimientoId)" />
     </div>
 </div>
 
 @code {
     [Parameter]
-    public UbicacionDto dto { get; set; } = new();
+    public UbicacionDto Dto { get; set; }
+
+    [Parameter]
+    public EventCallback<UbicacionDto> DtoChanged { get; set; }
+
+    private List<RegionSaludDto> RegionesList = new();
+    private List<ProvinciaDto> ProvinciasList = new();
+    private List<DistritoDto> DistritosList = new();
+    private List<CorregimientoDto> CorregimientosList = new();
 
     [Inject]
     private IUbicacionService UbicacionService { get; set; }
-
-    private List<RegionSaludDto> regiones = new();
-    private List<ProvinciaDto> provincias = new();
-    private List<DistritoDto> distritos = new();
-    private List<CorregimientoDto> corregimientos = new();
-
+    
     protected override async Task OnInitializedAsync()
     {
-        regiones = await UbicacionService.GetAllRegionesAsync();
+        RegionesList = await UbicacionService.GetAllRegionesAsync();
     }
 
-    private async Task CargarProvincias(ChangeEventArgs e)
+    private async Task OnRegionChanged(int? id)
     {
-        if (int.TryParse(e.Value?.ToString(), out var regionId))
-        {
-            dto.RegionSaludId = regionId;
-            dto.RegionSalud = regiones.FirstOrDefault(r => r.Id == regionId)?.Nombre;
+        Dto.RegionSaludId = id;
+        Dto.RegionSalud = RegionesList.FirstOrDefault(r => r.RegionSaludId == id)?.Nombre;
 
-            provincias = await UbicacionService.GetProvinciasByRegionAsync(regionId);
-            distritos.Clear();
-            corregimientos.Clear();
+        if (id > 0)
+        {
+            ProvinciasList = await UbicacionService.GetProvinciasByRegionAsync(id ?? 0);
+            Dto.ProvinciaId = 0;
+            Dto.DistritoId = 0;
+            Dto.CorregimientoId = 0;
+            await DtoChanged.InvokeAsync(Dto);
         }
     }
 
-    private async Task CargarDistritos(ChangeEventArgs e)
+    private async Task OnProvinciaChanged(int? id)
     {
-        if (int.TryParse(e.Value?.ToString(), out var provinciaId))
-        {
-            dto.ProvinciaId = provinciaId;
-            dto.Provincia = provincias.FirstOrDefault(p => p.Id == provinciaId)?.Nombre;
+        Dto.ProvinciaId = id;
+        Dto.Provincia = ProvinciasList.FirstOrDefault(p => p.ProvinciaId == id)?.Nombre;
 
-            distritos = await UbicacionService.GetDistritosByProvinciaAsync(provinciaId);
-            corregimientos.Clear();
+        if (id > 0)
+        {
+            DistritosList = await UbicacionService.GetDistritosByProvinciaAsync(id ?? 0);
+            Dto.DistritoId = 0;
+            Dto.CorregimientoId = 0;
+            await DtoChanged.InvokeAsync(Dto);
         }
     }
 
-    private async Task CargarCorregimientos(ChangeEventArgs e)
+    private async Task OnDistritoChanged(int? id)
     {
-        if (int.TryParse(e.Value?.ToString(), out var distritoId))
-        {
-            dto.DistritoId = distritoId;
-            dto.Distrito = distritos.FirstOrDefault(d => d.Id == distritoId)?.Nombre;
+        Dto.DistritoId = id;
+        Dto.Distrito = DistritosList.FirstOrDefault(d => d.DistritoId == id)?.Nombre;
 
-            corregimientos = await UbicacionService.GetCorregimientosByDistritoAsync(distritoId);
+        if (id > 0)
+        {
+            CorregimientosList = await UbicacionService.GetCorregimientosByDistritoAsync(id ?? 0);
+            Dto.CorregimientoId = 0;
+            await DtoChanged.InvokeAsync(Dto);
         }
+    }
+
+    private async Task OnCorregimientoChanged(int? id)
+    {
+        Dto.CorregimientoId = id;
+        await DtoChanged.InvokeAsync(Dto);
     }
 }

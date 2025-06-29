@@ -19,7 +19,7 @@ namespace SISTEMALEGAL.Services.Implementations
             return await _context.RegionSalud
                 .Select(r => new RegionSaludDto
                 {
-                    Id = r.Id,
+                    RegionSaludId = r.RegionSaludId,
                     Nombre = r.Nombre
                 }).ToListAsync();
         }
@@ -30,7 +30,7 @@ namespace SISTEMALEGAL.Services.Implementations
                 .Where(p => p.RegionSaludId == regionId)
                 .Select(p => new ProvinciaDto
                 {
-                    Id = p.Id,
+                    ProvinciaId = p.ProvinciaId,
                     Nombre = p.Nombre
                 }).ToListAsync();
         }
@@ -41,7 +41,7 @@ namespace SISTEMALEGAL.Services.Implementations
                 .Where(d => d.ProvinciaId == provinciaId)
                 .Select(d => new DistritoDto
                 {
-                    Id = d.Id,
+                    DistritoId = d.DistritoId,
                     Nombre = d.Nombre
                 }).ToListAsync();
         }
@@ -52,7 +52,7 @@ namespace SISTEMALEGAL.Services.Implementations
                 .Where(c => c.DistritoId == distritoId)
                 .Select(c => new CorregimientoDto
                 {
-                    Id = c.Id,
+                    CorregimientoId = c.CorregimientoId,
                     Nombre = c.Nombre
                 }).ToListAsync();
         }

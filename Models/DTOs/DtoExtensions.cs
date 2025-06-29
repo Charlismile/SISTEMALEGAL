@@ -5,22 +5,25 @@ namespace SISTEMALEGAL.Models.Extensions
 {
     public static class DtoExtensions
     {
-        // Mapea ComiteDto → RegistroComite
+        // ComiteDto -> RegistroComite
         public static RegistroComite ToEntity(this ComiteDto dto)
         {
             return new RegistroComite
             {
-                Id = dto.Id,
+                RegistroComiteId = dto.Id,
                 ComiteSalud = dto.ComiteSalud,
+                RegionSalud = dto.RegionSalud,
                 Provincia = dto.Provincia,
                 Distrito = dto.Distrito,
                 Corregimiento = dto.Corregimiento,
+                TipoTramite = dto.TipoTramite,
+                FechaEleccion = dto.FechaEleccion,
+                FechaCreacion = dto.FechaCreacion,
+                Comunidad = dto.Comunidad,
 
                 MiembroComite = dto.Miembros.Select(m => m.ToEntity()).ToList(),
                 JuntaInterventora = dto.JuntaInterventoras.Select(j => j.ToEntity()).ToList(),
-
-                // ✅ Ahora sí puedes asignar listas
-                DocumentoAdjunto = dto.DocumentosAdjuntos?.Select(d => d.ToEntity()).ToList() ?? new List<DocumentoAdjunto>()
+                DocumentoAdjunto = dto.DocumentosAdjuntos.Select(d => d.ToEntity()).ToList()
             };
         }
 
@@ -28,47 +31,50 @@ namespace SISTEMALEGAL.Models.Extensions
         {
             return new ComiteDto
             {
-                Id = entity.Id,
+                Id = entity.RegistroComiteId,
                 ComiteSalud = entity.ComiteSalud,
+                RegionSalud = entity.RegionSalud,
                 Provincia = entity.Provincia,
                 Distrito = entity.Distrito,
                 Corregimiento = entity.Corregimiento,
+                TipoTramite = entity.TipoTramite,
+                FechaEleccion = entity.FechaEleccion,
+                FechaCreacion = entity.FechaCreacion,
+                Comunidad = entity.Comunidad,
 
                 Miembros = entity.MiembroComite?.Select(m => m.ToDto()).ToList() ?? new(),
                 JuntaInterventoras = entity.JuntaInterventora?.Select(j => j.ToDto()).ToList() ?? new(),
-        
-                // ✅ Mapea correctamente desde entidad a DTO
                 DocumentosAdjuntos = entity.DocumentoAdjunto?.Select(d => d.ToDto()).ToList() ?? new()
             };
         }
 
+        // MiembroDto <-> MiembroComite
         public static MiembroComite ToEntity(this MiembroDto dto)
         {
             return new MiembroComite
             {
-                Id = dto.Id,
                 Nombre = dto.Nombre,
                 Cedula = dto.Cedula,
                 Cargo = dto.Cargo
             };
         }
-        
+
         public static MiembroDto ToDto(this MiembroComite entity)
         {
             return new MiembroDto
             {
-                Id = entity.Id,
+                Id = entity.MiembroComiteId,
                 Nombre = entity.Nombre,
                 Cedula = entity.Cedula,
                 Cargo = entity.Cargo
             };
         }
 
+        // JuntaInterventoraDto <-> JuntaInterventora
         public static JuntaInterventora ToEntity(this JuntaInterventoraDto dto)
         {
             return new JuntaInterventora
             {
-                Id = dto.Id,
                 Nombre = dto.Nombre,
                 Cedula = dto.Cedula
             };
@@ -78,18 +84,48 @@ namespace SISTEMALEGAL.Models.Extensions
         {
             return new JuntaInterventoraDto
             {
-                Id = entity.Id,
+                Id = entity.JuntaInterventoraId,
                 Nombre = entity.Nombre,
                 Cedula = entity.Cedula
             };
         }
 
-        // Mapea RegistroAsociacionDto → RegistroAsociaciones
+        // DocumentoAdjuntoDto <-> DocumentoAdjunto
+        public static DocumentoAdjunto ToEntity(this DocumentoAdjuntoDto dto)
+        {
+            return new DocumentoAdjunto
+            {
+                NombreOriginal = dto.NombreOriginal,
+                RutaArchivo = dto.RutaArchivo,
+                TipoDocumento = dto.TipoDocumento,
+                FechaSubida = dto.FechaSubida,
+                UsuarioId = dto.UsuarioId,
+                RegistroComiteId = dto.RegistroComiteId,
+                RegistroAsociacionId = dto.RegistroAsociacionId
+            };
+        }
+
+        public static DocumentoAdjuntoDto ToDto(this DocumentoAdjunto entity)
+        {
+            return new DocumentoAdjuntoDto
+            {
+                Id = entity.DocumentoAdjuntoId,
+                NombreOriginal = entity.NombreOriginal,
+                RutaArchivo = entity.RutaArchivo,
+                TipoDocumento = entity.TipoDocumento,
+                FechaSubida = entity.FechaSubida,
+                RegistroComiteId = entity.RegistroComiteId,
+                RegistroAsociacionId = entity.RegistroAsociacionId
+            };
+        }
+
+        // RegistroAsociacionDto <-> RegistroAsociaciones
+
         public static RegistroAsociaciones ToEntity(this RegistroAsociacionDto dto)
         {
             return new RegistroAsociaciones
             {
-                Id = dto.Id,
+                RegistroAsociacionId = dto.Id,
                 Asociacion = dto.Asociacion,
                 Tomo = dto.Tomo,
                 Folio = dto.Folio,
@@ -98,24 +134,47 @@ namespace SISTEMALEGAL.Models.Extensions
                 Resolucion = dto.Resolucion,
                 FechaCreacion = dto.FechaCreacion,
 
-                // Si son listas (uno a muchos)
+                // ✅ Convertir el DTO a entidad y agregarlo como lista
                 RepresentanteLegal = dto.RepresentanteLegal != null 
                     ? new List<RepresentanteLegal> { dto.RepresentanteLegal.ToEntity() } 
                     : new List<RepresentanteLegal>(),
 
-                ApoderadoLegal = dto.ApoderadoLegal != null 
-                    ? new List<ApoderadoLegal> { dto.ApoderadoLegal.ToEntity() } 
-                    : new List<ApoderadoLegal>()
+                ApoderadoLegal = dto.ApoderadoLegal != null
+                    ? new List<ApoderadoLegal> { dto.ApoderadoLegal.ToEntity() }
+                    : new List<ApoderadoLegal>(),
+
+                DocumentoAdjunto = dto.DocumentosAdjuntos.Select(d => d.ToEntity()).ToList()
             };
         }
 
+        public static RegistroAsociacionDto ToDto(this RegistroAsociaciones entity)
+        {
+            return new RegistroAsociacionDto
+            {
+                Id = entity.RegistroAsociacionId,
+                Asociacion = entity.Asociacion,
+                Tomo = entity.Tomo,
+                Folio = entity.Folio,
+                Asiento = entity.Asiento,
+                ActividadSalud = entity.ActividadSalud,
+                Resolucion = entity.Resolucion,
+                FechaCreacion = entity.FechaCreacion,
+
+                // ✅ Toma el primer representante/apoderado de la colección
+                RepresentanteLegal = entity.RepresentanteLegal?.FirstOrDefault()?.ToDto(),
+                ApoderadoLegal = entity.ApoderadoLegal?.FirstOrDefault()?.ToDto(),
+
+                DocumentosAdjuntos = entity.DocumentoAdjunto?.Select(d => d.ToDto()).ToList() ?? new()
+            };
+        }
+
+        // RepresentanteLegalDto <-> RepresentanteLegal
         public static RepresentanteLegal ToEntity(this RepresentanteLegalDto dto)
         {
             if (dto == null) return null;
 
             return new RepresentanteLegal
             {
-                Id = dto.Id,
                 Nombre = dto.Nombre,
                 Cedula = dto.Cedula,
                 Cargo = dto.Cargo,
@@ -124,13 +183,26 @@ namespace SISTEMALEGAL.Models.Extensions
             };
         }
 
+        public static RepresentanteLegalDto ToDto(this RepresentanteLegal entity)
+        {
+            return new RepresentanteLegalDto
+            {
+                Id = entity.RepresentanteLegalId,
+                Nombre = entity.Nombre,
+                Cedula = entity.Cedula,
+                Cargo = entity.Cargo,
+                Telefono = entity.Telefono,
+                Direccion = entity.Direccion
+            };
+        }
+
+        // ApoderadoLegalDto <-> ApoderadoLegal
         public static ApoderadoLegal ToEntity(this ApoderadoLegalDto dto)
         {
             if (dto == null) return null;
 
             return new ApoderadoLegal
             {
-                Id = dto.Id,
                 Nombre = dto.Nombre,
                 Cedula = dto.Cedula,
                 Idoneidad = dto.Idoneidad,
@@ -141,30 +213,20 @@ namespace SISTEMALEGAL.Models.Extensions
                 FirmaAbogadosNombre = dto.FirmaAbogadosNombre
             };
         }
-        public static DocumentoAdjunto ToEntity(this DocumentoAdjuntoDto dto)
-        {
-            return new DocumentoAdjunto
-            {
-                Id = dto.Id,
-                NombreOriginal = dto.NombreOriginal,
-                RutaArchivo = dto.RutaArchivo,
-                TipoDocumento = dto.TipoDocumento,
-                FechaSubida = dto.FechaSubida,
-                RegistroComiteId = dto.RegistroComiteId,
-                RegistroAsociacionId = dto.RegistroAsociacionId
-            };
-        }
 
-        public static DocumentoAdjuntoDto ToDto(this DocumentoAdjunto entity)
+        public static ApoderadoLegalDto ToDto(this ApoderadoLegal entity)
         {
-            return new DocumentoAdjuntoDto
+            return new ApoderadoLegalDto
             {
-                Id = entity.Id,
-                NombreOriginal = entity.NombreOriginal,
-                RutaArchivo = entity.RutaArchivo,
-                TipoDocumento = entity.TipoDocumento,
-                FechaSubida = entity.FechaSubida,
-                RegistroComiteId = entity.RegistroComiteId
+                Id = entity.ApoderadoLegalId,
+                Nombre = entity.Nombre,
+                Cedula = entity.Cedula,
+                Idoneidad = entity.Idoneidad,
+                Email = entity.Email,
+                Telefono = entity.Telefono,
+                Direccion = entity.Direccion,
+                EsFirmaAbogados = entity.EsFirmaAbogados,
+                FirmaAbogadosNombre = entity.FirmaAbogadosNombre
             };
         }
     }

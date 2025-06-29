@@ -5,7 +5,7 @@ namespace SISTEMALEGAL.Models.Entities.BDUbicaciones;
 
 public partial class RegionSalud
 {
-    public int Id { get; set; }
+    public int RegionSaludId { get; set; }
 
     public int CodigoRegion { get; set; }
 

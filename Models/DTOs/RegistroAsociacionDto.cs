@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using SISTEMALEGAL.Components.Pages.Formularios;
 
 namespace SISTEMALEGAL.Models.DTOs
 {
@@ -7,59 +6,34 @@ namespace SISTEMALEGAL.Models.DTOs
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "El nombre de la asociación es obligatorio.")]
-        public string Asociacion { get; set; }
+        [Required(ErrorMessage = "El nombre de la asociación es obligatorio")]
+        public string? Asociacion { get; set; }
 
         public int? Tomo { get; set; }
         public int? Folio { get; set; }
         public int? Asiento { get; set; }
 
-        [Required(ErrorMessage = "La actividad de salud es obligatoria.")]
-        public string ActividadSalud { get; set; }
-
-        [Required(ErrorMessage = "Debe adjuntar una resolución.")]
-        public string Resolucion { get; set; }
-
-        [Required(ErrorMessage = "La fecha de creación es obligatoria.")]
+        public string? ActividadSalud { get; set; }
+        
+        [Required(ErrorMessage = "El número de resolucion es obligatorio")]
+        public string? Resolucion { get; set; }
         public DateTime? FechaCreacion { get; set; }
 
-        public List<string> DocumentosAdjuntos { get; set; } = new();
+        // Propiedades de ubicación
+        public int? RegionSaludId { get; set; }
+        public string? RegionSalud { get; set; }
+        public int? ProvinciaId { get; set; }
+        public string? Provincia { get; set; }
+        public int? DistritoId { get; set; }
+        public string? Distrito { get; set; }
+        public int? CorregimientoId { get; set; }
+        public string? Corregimiento { get; set; }
 
-        public RepresentanteLegalDto RepresentanteLegal { get; set; } = new();
-        public ApoderadoLegalDto ApoderadoLegal { get; set; } = new();
-    }
-    
-    public class ApoderadoLegalDto
-    {
-        public int Id { get; set; }
-        [Required(ErrorMessage = "El nombre es obligatorio.")]
-        public string Nombre { get; set; }
+        // Relaciones uno a muchos
+        public RepresentanteLegalDto? RepresentanteLegal { get; set; }
+        public ApoderadoLegalDto? ApoderadoLegal { get; set; }
 
-        [Required(ErrorMessage = "La cédula es obligatoria.")]
-        public string Cedula { get; set; }
-
-        public bool Idoneidad { get; set; } // true si está validada
-        public string Email { get; set; }
-        public string Telefono { get; set; }
-        public string Direccion { get; set; }
-
-        public bool EsFirmaAbogados { get; set; }
-        public string FirmaAbogadosNombre { get; set; } // Si pertenece a una firma
-    }
-    
-    public class RepresentanteLegalDto
-    {
-        public int Id { get; set; }
-        [Required(ErrorMessage = "El nombre es obligatorio.")]
-        public string Nombre { get; set; }
-
-        [Required(ErrorMessage = "La cédula es obligatoria.")]
-        public string Cedula { get; set; }
-
-        [Required(ErrorMessage = "El cargo es obligatorio.")]
-        public string Cargo { get; set; }
-
-        public string Telefono { get; set; }
-        public string Direccion { get; set; }
+        // Listas (por si decides tener más de uno)
+        public List<DocumentoAdjuntoDto> DocumentosAdjuntos { get; set; } = new();
     }
 }

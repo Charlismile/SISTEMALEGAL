@@ -22,7 +22,7 @@ namespace SISTEMALEGAL.Services
             await _context.RegistroComite.AddAsync(entity);
             await _context.SaveChangesAsync();
 
-            return entity.Id;
+            return entity.RegistroComiteId;
         }
 
         // Actualizar comité
@@ -31,7 +31,7 @@ namespace SISTEMALEGAL.Services
             var entity = await _context.RegistroComite
                 .Include(c => c.MiembroComite)
                 .Include(c => c.JuntaInterventora)
-                .FirstOrDefaultAsync(c => c.Id == dto.Id);
+                .FirstOrDefaultAsync(c => c.RegistroComiteId == dto.Id);
 
             if (entity == null) throw new Exception("Comité no encontrado");
 
@@ -71,7 +71,7 @@ namespace SISTEMALEGAL.Services
 
             return registros.Select(r => new ComiteDto
             {
-                Id = r.Id,
+                Id = r.RegistroComiteId,
                 ComiteSalud = r.ComiteSalud,
                 Comunidad = r.Comunidad,
                 Corregimiento = r.Corregimiento,
@@ -84,7 +84,7 @@ namespace SISTEMALEGAL.Services
 
                 Miembros = r.MiembroComite?.Select(m => new MiembroDto
                 {
-                    Id = m.Id,
+                    Id = m.MiembroComiteId,
                     Nombre = m.Nombre,
                     Cedula = m.Cedula,
                     Cargo = m.Cargo
@@ -92,7 +92,7 @@ namespace SISTEMALEGAL.Services
 
                 JuntaInterventoras = r.JuntaInterventora?.Select(j => new JuntaInterventoraDto
                 {
-                    Id = j.Id,
+                    Id = j.JuntaInterventoraId,
                     Nombre = j.Nombre,
                     Cedula = j.Cedula
                 }).ToList()

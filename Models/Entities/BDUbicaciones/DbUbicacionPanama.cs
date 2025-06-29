@@ -30,7 +30,7 @@ public partial class DbUbicacionPanama : DbContext
     {
         modelBuilder.Entity<Corregimiento>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Corregim__3214EC07D5083803");
+            entity.HasKey(e => e.CorregimientoId).HasName("PK__Corregim__3214EC0762FB3DAA");
 
             entity.HasIndex(e => new { e.CodigoCorregimiento, e.DistritoId }, "UQ_Corregimiento_Codigo").IsUnique();
 
@@ -38,12 +38,12 @@ public partial class DbUbicacionPanama : DbContext
 
             entity.HasOne(d => d.Distrito).WithMany(p => p.Corregimiento)
                 .HasForeignKey(d => d.DistritoId)
-                .HasConstraintName("FK__Corregimi__Distr__31EC6D26");
+                .HasConstraintName("FK__Corregimi__Distr__5535A963");
         });
 
         modelBuilder.Entity<Distrito>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Distrito__3214EC07A244901D");
+            entity.HasKey(e => e.DistritoId).HasName("PK__Distrito__3214EC07355E8722");
 
             entity.HasIndex(e => new { e.CodigoDistrito, e.ProvinciaId }, "UQ_Distrito_Codigo").IsUnique();
 
@@ -51,12 +51,12 @@ public partial class DbUbicacionPanama : DbContext
 
             entity.HasOne(d => d.Provincia).WithMany(p => p.Distrito)
                 .HasForeignKey(d => d.ProvinciaId)
-                .HasConstraintName("FK__Distrito__Provin__2E1BDC42");
+                .HasConstraintName("FK__Distrito__Provin__5629CD9C");
         });
 
         modelBuilder.Entity<Provincia>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Provinci__3214EC07AEBA6305");
+            entity.HasKey(e => e.ProvinciaId).HasName("PK__Provinci__3214EC072A99A560");
 
             entity.HasIndex(e => e.CodigoProvincia, "UQ_Provincia_Codigo").IsUnique();
 
@@ -66,16 +66,16 @@ public partial class DbUbicacionPanama : DbContext
 
             entity.HasOne(d => d.RegionSalud).WithMany(p => p.Provincia)
                 .HasForeignKey(d => d.RegionSaludId)
-                .HasConstraintName("FK__Provincia__Regio__2A4B4B5E");
+                .HasConstraintName("FK__Provincia__Regio__571DF1D5");
         });
 
         modelBuilder.Entity<RegionSalud>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__RegionSa__3214EC070C5BE500");
+            entity.HasKey(e => e.RegionSaludId).HasName("PK__RegionSa__3214EC07DB0DE7BC");
 
-            entity.HasIndex(e => e.Nombre, "UQ__RegionSa__75E3EFCFAD432D6D").IsUnique();
+            entity.HasIndex(e => e.Nombre, "UQ__RegionSa__75E3EFCFC55DD11A").IsUnique();
 
-            entity.HasIndex(e => e.CodigoRegion, "UQ__RegionSa__7F1F2F9BE656A3B2").IsUnique();
+            entity.HasIndex(e => e.CodigoRegion, "UQ__RegionSa__7F1F2F9B39B04293").IsUnique();
 
             entity.Property(e => e.Nombre).HasMaxLength(100);
         });

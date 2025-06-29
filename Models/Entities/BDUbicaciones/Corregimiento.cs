@@ -5,7 +5,7 @@ namespace SISTEMALEGAL.Models.Entities.BDUbicaciones;
 
 public partial class Corregimiento
 {
-    public int Id { get; set; }
+    public int CorregimientoId { get; set; }
 
     public int CodigoCorregimiento { get; set; }
 

@@ -1,118 +1,214 @@
 ﻿@page "/registrar-comite"
 @using Microsoft.AspNetCore.Components.Web
+@using SISTEMALEGAL.Components.Layout
 @using SISTEMALEGAL.Models.DTOs
 @using SISTEMALEGAL.Services.Interfaces
 @inject IComiteRepository ComiteRepo
-@inject IUbicacionService UbicacionService
 @inject NavigationManager NavManager
+@layout EmptyLayout
 
-<PageTitle>Registrar Comité</PageTitle>
+<PageTitle>Nuevo Comité</PageTitle>
 
-<div class="container mt-4 mb-5">
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-header bg-primary text-white rounded-top-4">
-            <h4 class="mb-0">Registro de Comité de Salud</h4>
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-primary text-white rounded-top">
+            <h4 class="mb-0">Registro de Comité</h4>
         </div>
         <div class="card-body">
+
             <EditForm Model="@comite" OnValidSubmit="Guardar">
                 <DataAnnotationsValidator />
-                <ValidationSummary class="text-danger" />
+                <ValidationSummary />
 
-                <!-- Sección de Ubicación -->
-                <fieldset class="mb-4">
-                    <legend class="fs-5 fw-semibold border-bottom pb-2">Ubicación Geográfica</legend>
-                    <SelectRegionForm dto="@ubicacion" />
-                </fieldset>
-
-                <!-- Datos del Comité -->
-                <fieldset class="mb-4">
-                    <legend class="fs-5 fw-semibold border-bottom pb-2">Datos del Comité</legend>
-
-                    <div class="mb-3">
+                <!-- Datos principales -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
                         <label class="form-label">Nombre del Comité</label>
                         <InputText @bind-Value="comite.ComiteSalud" class="form-control" />
-                        <ValidationMessage For="@(() => comite.ComiteSalud)" class="text-danger" />
+                        <ValidationMessage For="@(() => comite.ComiteSalud)" />
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Fecha de Creación</label>
-                        <InputDate @bind-Value="comite.FechaCreacion" class="form-control" />
-                        <ValidationMessage For="@(() => comite.FechaCreacion)" class="text-danger" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Tipo de Trámite</label>
-                        <InputSelect @bind-Value="comite.TipoTramite" class="form-select">
-                            <option value="">Seleccione...</option>
-                            <option value="Personería">Personería</option>
-                            <option value="Cambio Junta Directiva">Cambio Junta Directiva</option>
-                            <option value="Junta Interventora">Junta Interventora</option>
-                        </InputSelect>
-                        <ValidationMessage For="@(() => comite.TipoTramite)" class="text-danger" />
-                    </div>
-
-                    @if (comite.TipoTramite == "Cambio Junta Directiva")
-                    {
-                        <div class="mb-3">
-                            <label class="form-label">Fecha de Elección</label>
-                            <InputDate @bind-Value="comite.FechaEleccion" class="form-control" />
-                            <ValidationMessage For="@(() => comite.FechaEleccion)" class="text-danger" />
-                        </div>
-                    }
-
-                    <div class="mb-3">
+                    <div class="col-md-6">
                         <label class="form-label">Comunidad</label>
                         <InputText @bind-Value="comite.Comunidad" class="form-control" />
-                        <ValidationMessage For="@(() => comite.Comunidad)" class="text-danger" />
                     </div>
-                </fieldset>
+                </div>
 
-                <!-- Sección de Miembros -->
-                <fieldset class="mb-4">
-                    <legend class="fs-5 fw-semibold border-bottom pb-2">Miembros del Comité</legend>
-                    <ComiteMiembroForm miembros="@comite.Miembros" />
-                </fieldset>
+                <!-- Selección geográfica -->
+                <SelectRegionForm Dto="@ubicacion" />
 
-                <!-- Sección de Junta Interventora -->
-                @if (comite.MostrarJunta)
+                <!-- Tipo de trámite -->
+                <div class="mb-3">
+                    <label class="form-label">Tipo de Trámite</label>
+                    <InputSelect @bind-Value="comite.TipoTramite" class="form-select">
+                        <option value="">Seleccione...</option>
+                        <option value="Personería">Personería</option>
+                        <option value="Cambio Junta Directiva">Cambio Junta Directiva</option>
+                        <option value="Junta Interventora">Junta Interventora</option>
+                    </InputSelect>
+                </div>
+
+                <!-- Fechas -->
+                <div class="mb-3">
+                    <label class="form-label">Fecha de Creación</label>
+                    <InputDate @bind-Value="comite.FechaCreacion" class="form-control" />
+                    <ValidationMessage For="@(() => comite.FechaCreacion)" />
+                </div>
+
+                @if (comite.TipoTramite == "Cambio Junta Directiva")
                 {
-                    <fieldset class="mb-4">
-                        <legend class="fs-5 fw-semibold border-bottom pb-2">Junta Interventora</legend>
-                        <JuntaInterventoraForm juntas="@comite.JuntaInterventoras" />
-                    </fieldset>
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de Elección</label>
+                        <InputDate @bind-Value="comite.FechaEleccion" class="form-control" />
+                        <ValidationMessage For="@(() => comite.FechaEleccion)" />
+                    </div>
                 }
 
-                <div class="text-end">
-                    <button type="submit" class="btn btn-success px-4">Guardar Comité</button>
+                <!-- Miembros -->
+                <div class="mb-3">
+                    <label>Miembros</label>
+                    @foreach (var miembro in comite.Miembros)
+                    {
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-4">
+                                <InputText @bind-Value="miembro.Nombre" placeholder="Nombre" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <InputText @bind-Value="miembro.Cedula" placeholder="Cédula" class="form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <InputText @bind-Value="miembro.Cargo" placeholder="Cargo" class="form-control" />
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger btn-sm" @onclick="() => comite.Miembros.Remove(miembro)">X</button>
+                            </div>
+                        </div>
+                    }
+                    <button type="button" class="btn btn-outline-primary btn-sm mt-2" @onclick="AgregarMiembro">+ Agregar Miembro</button>
                 </div>
+
+                <!-- Junta Interventora -->
+                @if (comite.MostrarJunta)
+                {
+                    <div class="mb-3">
+                        <label>Junta Interventora</label>
+                        @foreach (var junta in comite.JuntaInterventoras)
+                        {
+                            <div class="row g-2 mb-2">
+                                <div class="col-md-5">
+                                    <InputText @bind-Value="junta.Nombre" placeholder="Nombre" class="form-control" />
+                                </div>
+                                <div class="col-md-5">
+                                    <InputText @bind-Value="junta.Cedula" placeholder="Cédula" class="form-control" />
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="button" class="btn btn-danger btn-sm" @onclick="() => comite.JuntaInterventoras.Remove(junta)">X</button>
+                                </div>
+                            </div>
+                        }
+                        <button type="button" class="btn btn-outline-warning btn-sm mt-2" @onclick="AgregarJunta">+ Agregar Interventor</button>
+                    </div>
+                }
+
+                <!-- Cargar documentos -->
+                <div class="mb-3">
+                    <label>Cargar Documentos</label>
+                    <InputFile multiple OnChange="CargarArchivos" />
+                    
+                    @if (archivos.Any())
+                    {
+                        <ul class="list-group list-group-flush mt-2">
+                            @foreach (var file in archivos)
+                            {
+                                <li class="list-group-item">@file.Name (@file.Size KB)</li>
+                            }
+                        </ul>
+                    }
+                </div>
+
+                <button type="submit" class="btn btn-success mt-3">Guardar Comité</button>
+                <button type="button" class="btn btn-secondary ms-2 mt-3" @onclick="LimpiarCampos">Limpiar</button>
             </EditForm>
         </div>
+    </div>
+    <div>
+        <button type="button" class="btn btn-secondary me-2" @onclick="Regresar">Regresar</button>
     </div>
 </div>
 
 @code {
     private ComiteDto comite = new();
     private UbicacionDto ubicacion = new();
+    private List<IBrowserFile> archivos = new();
+
+    protected override void OnInitialized()
+    {
+        // Puedes cargar datos si es edición
+    }
+
+    private void AgregarMiembro()
+    {
+        if (comite.Miembros.Count < 7) // Máximo 7 miembros
+            comite.Miembros.Add(new MiembroDto());
+    }
+
+    private void AgregarJunta()
+    {
+        if (comite.JuntaInterventoras.Count < 2) // Máximo 2 interventores
+            comite.JuntaInterventoras.Add(new JuntaInterventoraDto());
+    }
+
+    private async Task CargarArchivos(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            var nombreUnico = Guid.NewGuid() + Path.GetExtension(file.Name);
+            var ruta = $"/archivos/comites/{nombreUnico}";
+
+            using var stream = new FileStream(Path.Combine("wwwroot", "archivos", "comites", nombreUnico), FileMode.Create);
+            await file.OpenReadStream().CopyToAsync(stream);
+
+            comite.DocumentosAdjuntos.Add(new DocumentoAdjuntoDto
+            {
+                NombreOriginal = file.Name,
+                RutaArchivo = ruta,
+                TipoDocumento = "Comité",
+                FechaSubida = DateTime.Now
+            });
+        }
+    }
 
     private async Task Guardar()
     {
+        // Asigna valores desde el componente de ubicación
         comite.RegionSalud = ubicacion.RegionSalud;
         comite.Provincia = ubicacion.Provincia;
         comite.Distrito = ubicacion.Distrito;
         comite.Corregimiento = ubicacion.Corregimiento;
 
+        // Valida fechas obligatorias
         if (!comite.FechaCreacion.HasValue)
         {
-            // Aquí podrías mostrar un modal o una alerta visual
+            // Mostrar mensaje de error o usar un servicio de notificación
             return;
         }
 
         if (comite.TipoTramite == "Cambio Junta Directiva" && !comite.FechaEleccion.HasValue)
         {
+            // Mostrar mensaje de fecha requerida
             return;
         }
 
-        var id = await ComiteRepo.CreateAsync(comite);
-        NavManager.NavigateTo($"/comite/{id}");
+        await ComiteRepo.CreateAsync(comite);
+        NavManager.NavigateTo("/comites");
+    }
+
+    private void LimpiarCampos()
+    {
+        comite = new();
+        ubicacion = new();
+    }
+    private void Regresar()
+    {
+        NavManager.NavigateTo("/");
     }
 }

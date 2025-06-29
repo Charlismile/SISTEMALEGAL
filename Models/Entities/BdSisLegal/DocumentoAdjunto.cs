@@ -5,7 +5,7 @@ namespace SISTEMALEGAL.Models.Entities.BdSisLegal;
 
 public partial class DocumentoAdjunto
 {
-    public int Id { get; set; }
+    public int DocumentoAdjuntoId { get; set; }
 
     public string NombreOriginal { get; set; } = null!;
 

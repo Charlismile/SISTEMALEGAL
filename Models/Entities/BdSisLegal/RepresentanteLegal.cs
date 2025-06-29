@@ -5,13 +5,13 @@ namespace SISTEMALEGAL.Models.Entities.BdSisLegal;
 
 public partial class RepresentanteLegal
 {
-    public int Id { get; set; }
+    public int RepresentanteLegalId { get; set; }
 
     public int RegistroAsociacionId { get; set; }
 
-    public string? Nombre { get; set; }
+    public string Nombre { get; set; } = null!;
 
-    public string? Cedula { get; set; }
+    public string Cedula { get; set; } = null!;
 
     public string? Cargo { get; set; }
 

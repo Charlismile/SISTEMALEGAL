@@ -5,7 +5,7 @@ namespace SISTEMALEGAL.Models.Entities.BDUbicaciones;
 
 public partial class Distrito
 {
-    public int Id { get; set; }
+    public int DistritoId { get; set; }
 
     public int CodigoDistrito { get; set; }
 

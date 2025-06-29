@@ -36,7 +36,7 @@ public partial class DbContextSisLegal : DbContext
     {
         modelBuilder.Entity<ApoderadoLegal>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Apoderad__3214EC07E3F7CF5F");
+            entity.HasIndex(e => e.RegistroAsociacionId, "IX_ApoderadoLegal_RegistroAsociacionId");
 
             entity.Property(e => e.Cedula).HasMaxLength(20);
             entity.Property(e => e.Direccion).HasMaxLength(255);
@@ -47,47 +47,47 @@ public partial class DbContextSisLegal : DbContext
 
             entity.HasOne(d => d.RegistroAsociacion).WithMany(p => p.ApoderadoLegal)
                 .HasForeignKey(d => d.RegistroAsociacionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Apoderado__Regis__32E0915F");
+                .HasConstraintName("FK_ApoderadoLegal_RegistroAsociaciones");
         });
 
         modelBuilder.Entity<DocumentoAdjunto>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Document__3214EC0701C12FBD");
+            entity.HasIndex(e => e.RegistroAsociacionId, "IX_DocumentoAdjunto_RegistroAsociacionId").HasFilter("([RegistroAsociacionId] IS NOT NULL)");
+
+            entity.HasIndex(e => e.RegistroComiteId, "IX_DocumentoAdjunto_RegistroComiteId").HasFilter("([RegistroComiteId] IS NOT NULL)");
 
             entity.Property(e => e.FechaSubida).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.NombreOriginal).HasMaxLength(255);
             entity.Property(e => e.RutaArchivo).HasMaxLength(512);
-            entity.Property(e => e.TipoDocumento).HasMaxLength(100);
+            entity.Property(e => e.TipoDocumento).HasMaxLength(50);
             entity.Property(e => e.UsuarioId).HasMaxLength(450);
 
             entity.HasOne(d => d.RegistroAsociacion).WithMany(p => p.DocumentoAdjunto)
                 .HasForeignKey(d => d.RegistroAsociacionId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK__Documento__Regis__4CA06362");
+                .HasConstraintName("FK_DocumentoAdjunto_RegistroAsociaciones");
 
             entity.HasOne(d => d.RegistroComite).WithMany(p => p.DocumentoAdjunto)
                 .HasForeignKey(d => d.RegistroComiteId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK__Documento__Regis__4BAC3F29");
+                .HasConstraintName("FK_DocumentoAdjunto_RegistroComite");
         });
 
         modelBuilder.Entity<JuntaInterventora>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__JuntaInt__3214EC07C21F07D7");
+            entity.HasIndex(e => e.RegistroComiteId, "IX_JuntaInterventora_RegistroComiteId");
 
             entity.Property(e => e.Cedula).HasMaxLength(20);
             entity.Property(e => e.Nombre).HasMaxLength(255);
 
             entity.HasOne(d => d.RegistroComite).WithMany(p => p.JuntaInterventora)
                 .HasForeignKey(d => d.RegistroComiteId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__JuntaInte__Regis__2B3F6F97");
+                .HasConstraintName("FK_JuntaInterventora_RegistroComite");
         });
 
         modelBuilder.Entity<MiembroComite>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__MiembroC__3214EC073525266B");
+            entity.HasIndex(e => e.RegistroComiteId, "IX_MiembroComite_RegistroComiteId");
 
             entity.Property(e => e.Cargo).HasMaxLength(50);
             entity.Property(e => e.Cedula).HasMaxLength(20);
@@ -95,37 +95,36 @@ public partial class DbContextSisLegal : DbContext
 
             entity.HasOne(d => d.RegistroComite).WithMany(p => p.MiembroComite)
                 .HasForeignKey(d => d.RegistroComiteId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__MiembroCo__Regis__286302EC");
+                .HasConstraintName("FK_MiembroComite_RegistroComite");
         });
 
         modelBuilder.Entity<RegistroAsociaciones>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Registro__3214EC072AE40BF2");
+            entity.HasKey(e => e.RegistroAsociacionId);
 
             entity.Property(e => e.ActividadSalud).HasMaxLength(255);
             entity.Property(e => e.Asociacion).HasMaxLength(255);
-            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<RegistroComite>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Registro__3214EC07D0EAD7B0");
+            entity.HasIndex(e => e.Distrito, "IX_RegistroComite_Distrito");
+
+            entity.HasIndex(e => e.Provincia, "IX_RegistroComite_Provincia");
 
             entity.Property(e => e.ComiteSalud).HasMaxLength(255);
             entity.Property(e => e.Comunidad).HasMaxLength(255);
-            entity.Property(e => e.Corregimiento).HasMaxLength(255);
-            entity.Property(e => e.Distrito).HasMaxLength(255);
-            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
-            entity.Property(e => e.FechaEleccion).HasColumnType("datetime");
-            entity.Property(e => e.Provincia).HasMaxLength(255);
-            entity.Property(e => e.RegionSalud).HasMaxLength(255);
+            entity.Property(e => e.Corregimiento).HasMaxLength(100);
+            entity.Property(e => e.Distrito).HasMaxLength(100);
+            entity.Property(e => e.FechaCreacion).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.Provincia).HasMaxLength(100);
+            entity.Property(e => e.RegionSalud).HasMaxLength(100);
             entity.Property(e => e.TipoTramite).HasMaxLength(50);
         });
 
         modelBuilder.Entity<RepresentanteLegal>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Represen__3214EC078D7CB979");
+            entity.HasIndex(e => e.RegistroAsociacionId, "IX_RepresentanteLegal_RegistroAsociacionId");
 
             entity.Property(e => e.Cargo).HasMaxLength(100);
             entity.Property(e => e.Cedula).HasMaxLength(20);
@@ -135,8 +134,7 @@ public partial class DbContextSisLegal : DbContext
 
             entity.HasOne(d => d.RegistroAsociacion).WithMany(p => p.RepresentanteLegal)
                 .HasForeignKey(d => d.RegistroAsociacionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Represent__Regis__300424B4");
+                .HasConstraintName("FK_RepresentanteLegal_RegistroAsociaciones");
         });
 
         OnModelCreatingPartial(modelBuilder);
