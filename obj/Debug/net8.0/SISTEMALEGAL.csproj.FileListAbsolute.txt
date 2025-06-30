@@ -139,10 +139,7 @@ C:\Users\cabernalo\Documents\PROJECT GIT\SISTEMALEGAL\SISTEMALEGAL\obj\Debug\net
 C:\Users\cabernalo\Documents\PROJECT GIT\SISTEMALEGAL\SISTEMALEGAL\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.SISTEMALEGAL.props
 C:\Users\cabernalo\Documents\PROJECT GIT\SISTEMALEGAL\SISTEMALEGAL\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.SISTEMALEGAL.props
 C:\Users\cabernalo\Documents\PROJECT GIT\SISTEMALEGAL\SISTEMALEGAL\obj\Debug\net8.0\staticwebassets.pack.json
-C:\Users\cabernalo\Documents\PROJECT GIT\SISTEMALEGAL\SISTEMALEGAL\obj\Debug\net8.0\scopedcss\Components\Layout\MainLayout.razor.rz.scp.css
-C:\Users\cabernalo\Documents\PROJECT GIT\SISTEMALEGAL\SISTEMALEGAL\obj\Debug\net8.0\scopedcss\Components\Layout\NavMenu.razor.rz.scp.css
 C:\Users\cabernalo\Documents\PROJECT GIT\SISTEMALEGAL\SISTEMALEGAL\obj\Debug\net8.0\scopedcss\bundle\SISTEMALEGAL.styles.css
-C:\Users\cabernalo\Documents\PROJECT GIT\SISTEMALEGAL\SISTEMALEGAL\obj\Debug\net8.0\scopedcss\projectbundle\SISTEMALEGAL.bundle.scp.css
 C:\Users\cabernalo\Documents\PROJECT GIT\SISTEMALEGAL\SISTEMALEGAL\obj\Debug\net8.0\SISTEMAL.144145E6.Up2Date
 C:\Users\cabernalo\Documents\PROJECT GIT\SISTEMALEGAL\SISTEMALEGAL\obj\Debug\net8.0\SISTEMALEGAL.dll
 C:\Users\cabernalo\Documents\PROJECT GIT\SISTEMALEGAL\SISTEMALEGAL\obj\Debug\net8.0\refint\SISTEMALEGAL.dll
