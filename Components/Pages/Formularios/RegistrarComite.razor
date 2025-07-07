@@ -186,15 +186,15 @@
         comite.Corregimiento = ubicacion.Corregimiento;
 
         // Valida fechas obligatorias
-        if (!comite.FechaCreacion.HasValue)
+        if (comite.FechaCreacion == null)
         {
-            // Mostrar mensaje de error o usar un servicio de notificación
+            // Mostrar mensaje de error
             return;
         }
 
-        if (comite.TipoTramite == "Cambio Junta Directiva" && !comite.FechaEleccion.HasValue)
+        if (comite.TipoTramite == "Cambio Junta Directiva" && comite.FechaEleccion == null)
         {
-            // Mostrar mensaje de fecha requerida
+            // Mostrar mensaje de error
             return;
         }
 

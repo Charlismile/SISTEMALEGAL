@@ -14,10 +14,11 @@ namespace SISTEMALEGAL.Models.DTOs
         public string? Distrito { get; set; }
         public string? Corregimiento { get; set; }
 
-        [Required(ErrorMessage = "El tipo de tramite es obligatorio")]
         public string? TipoTramite { get; set; }
-        public DateTime? FechaEleccion { get; set; }
-        public DateTime? FechaCreacion { get; set; }
+
+        public DateTime FechaCreacion { get; set; } // ✅ Debe ser nullable
+        public DateTime FechaEleccion { get; set; } // ✅ Debe ser nullable
+
         public string? Comunidad { get; set; }
 
         public List<MiembroDto> Miembros { get; set; } = new();

@@ -1,12 +1,9 @@
 ﻿@page "/registrar-asociacion"
 @using Microsoft.AspNetCore.Components.Web
-@using SISTEMALEGAL.Components.Layout
 @using SISTEMALEGAL.Models.DTOs
 @using SISTEMALEGAL.Services.Interfaces
 @inject IAsociacionRepository AsociacionRepo
-@inject IUbicacionService UbicacionService
 @inject NavigationManager NavManager
-@layout EmptyLayout
 
 <PageTitle>Nueva Asociación</PageTitle>
 
@@ -34,22 +31,24 @@
                     </div>
                 </div>
 
-                <!-- Selección geográfica -->
-                <SelectRegionForm dto="@ubicacion" />
-
                 <!-- Información adicional -->
                 <div class="row mb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Tomo</label>
                         <InputNumber @bind-Value="dto.Tomo" class="form-control" />
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Folio</label>
                         <InputNumber @bind-Value="dto.Folio" class="form-control" />
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Asiento</label>
                         <InputNumber @bind-Value="dto.Asiento" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha de Creación</label>
+                        <InputDate @bind-Value="dto.FechaCreacion" class="form-control" />
+                        <ValidationMessage For="@(() => dto.FechaCreacion)" />
                     </div>
                 </div>
 
@@ -59,12 +58,8 @@
                     <InputTextArea @bind-Value="dto.Resolucion" class="form-control" rows="3" />
                 </div>
 
-                <!-- Fecha de creación -->
-                <div class="mb-3">
-                    <label class="form-label">Fecha de Creación</label>
-                    <InputDate @bind-Value="dto.FechaCreacion" class="form-control" />
-                    <ValidationMessage For="@(() => dto.FechaCreacion)" />
-                </div>
+                <!-- Selección geográfica -->
+                <SelectRegionForm Dto="@ubicacion" DtoChanged="OnUbicacionCambiada" />
 
                 <!-- Representante Legal -->
                 <div class="card mt-3 mb-3">
@@ -114,9 +109,9 @@
                     </div>
                 </div>
 
-                <!-- Cargar resolución -->
+                <!-- Documentos Adjuntos -->
                 <div class="mb-3">
-                    <label>Cargar Resolución</label>
+                    <label>Cargar Documentos</label>
                     <InputFile multiple OnChange="CargarArchivos" />
 
                     @if (archivos.Any())
@@ -130,29 +125,30 @@
                     }
                 </div>
 
-                <!-- Botón de guardar -->
-                <button type="submit" class="btn btn-success mt-3">Guardar Asociación</button>
-                <button type="button" class="btn btn-secondary ms-2 mt-3" @onclick="LimpiarCampos">Limpiar</button>
+                <!-- Botones -->
+                <div class="text-end mt-3">
+                    <button type="submit" class="btn btn-success me-2">Guardar Asociación</button>
+                    <button type="button" class="btn btn-secondary" @onclick="Regresar">Regresar</button>
+                </div>
             </EditForm>
         </div>
-    </div>
-    <div>
-        <button type="button" class="btn btn-secondary me-2" @onclick="Regresar">Regresar</button>
     </div>
 </div>
 
 @code {
     private RegistroAsociacionDto dto = new()
     {
-        RepresentanteLegal = new RepresentanteLegalDto(),
-        ApoderadoLegal = new ApoderadoLegalDto()
+        RepresentanteLegal = new(),
+        ApoderadoLegal = new()
     };
+
     private UbicacionDto ubicacion = new();
+
     private List<IBrowserFile> archivos = new();
 
-    protected override void OnInitialized()
+    private void Regresar()
     {
-        // Si es edición, puedes cargar aquí desde el repositorio
+        NavManager.NavigateTo("/asociaciones");
     }
 
     private async Task CargarArchivos(InputFileChangeEventArgs e)
@@ -178,15 +174,15 @@
 
     private async Task Guardar()
     {
-        // Asigna valores geográficos desde el componente
-        dto.RegionSalud = ubicacion.RegionSalud;
-        dto.Provincia = ubicacion.Provincia;
-        dto.Distrito = ubicacion.Distrito;
-        dto.Corregimiento = ubicacion.Corregimiento;
+        // Asigna datos geográficos
+        // dto.RegionSalud = ubicacion.RegionSalud;
+        // dto.Provincia = ubicacion.Provincia;
+        // dto.Distrito = ubicacion.Distrito;
+        // dto.Corregimiento = ubicacion.Corregimiento;
 
         if (!dto.FechaCreacion.HasValue)
         {
-            // Muestra mensaje de error si la fecha es obligatoria
+            // Mostrar mensaje de error
             return;
         }
 
@@ -194,13 +190,8 @@
         NavManager.NavigateTo("/asociaciones");
     }
 
-    private void LimpiarCampos()
+    private void OnUbicacionCambiada(UbicacionDto nueva)
     {
-        dto = new();
-        ubicacion = new();
-    }
-    private void Regresar()
-    {
-        NavManager.NavigateTo("/");
+        ubicacion = nueva;
     }
 }

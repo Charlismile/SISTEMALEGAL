@@ -62,8 +62,8 @@ namespace SISTEMALEGAL.Services.Implementations
             entity.Distrito = dto.Distrito;
             entity.Corregimiento = dto.Corregimiento;
             entity.TipoTramite = dto.TipoTramite;
-            entity.FechaEleccion = dto.FechaEleccion;
-            entity.FechaCreacion = dto.FechaCreacion;
+            entity.FechaEleccion = (DateTime)dto.FechaEleccion;
+            entity.FechaCreacion = (DateTime)dto.FechaCreacion;
             entity.Comunidad = dto.Comunidad;
 
             // Eliminar relaciones anteriores

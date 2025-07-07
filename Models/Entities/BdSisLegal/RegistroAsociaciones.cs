@@ -7,7 +7,7 @@ public partial class RegistroAsociaciones
 {
     public int RegistroAsociacionId { get; set; }
 
-    public string Asociacion { get; set; } = null!;
+    public string? Asociacion { get; set; }
 
     public string? ActividadSalud { get; set; }
 

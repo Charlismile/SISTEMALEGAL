@@ -7,21 +7,23 @@ public partial class RegistroComite
 {
     public int RegistroComiteId { get; set; }
 
-    public string ComiteSalud { get; set; } = null!;
-
-    public string? RegionSalud { get; set; }
-
-    public string? Provincia { get; set; }
-
-    public string? Distrito { get; set; }
+    public string? ComiteSalud { get; set; }
 
     public string? Corregimiento { get; set; }
 
+    public string? Distrito { get; set; }
+
+    public string? Provincia { get; set; }
+
+    public string? RegionSalud { get; set; }
+
     public string? TipoTramite { get; set; }
 
-    public DateTime? FechaEleccion { get; set; }
+    public string? Resolucion { get; set; }
 
-    public DateTime? FechaCreacion { get; set; }
+    public DateTime FechaEleccion { get; set; }
+
+    public DateTime FechaCreacion { get; set; }
 
     public string? Comunidad { get; set; }
 

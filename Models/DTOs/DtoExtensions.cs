@@ -132,17 +132,12 @@ namespace SISTEMALEGAL.Models.Extensions
                 Asiento = dto.Asiento,
                 ActividadSalud = dto.ActividadSalud,
                 Resolucion = dto.Resolucion,
-                FechaCreacion = dto.FechaCreacion,
 
-                // ✅ Convertir el DTO a entidad y agregarlo como lista
-                RepresentanteLegal = dto.RepresentanteLegal != null 
-                    ? new List<RepresentanteLegal> { dto.RepresentanteLegal.ToEntity() } 
-                    : new List<RepresentanteLegal>(),
+                // ✅ Asegura que se pueda guardar null
+                FechaCreacion = dto.FechaCreacion ?? default,
 
-                ApoderadoLegal = dto.ApoderadoLegal != null
-                    ? new List<ApoderadoLegal> { dto.ApoderadoLegal.ToEntity() }
-                    : new List<ApoderadoLegal>(),
-
+                RepresentanteLegal = new List<RepresentanteLegal> { dto.RepresentanteLegal.ToEntity() },
+                ApoderadoLegal = new List<ApoderadoLegal> { dto.ApoderadoLegal.ToEntity() },
                 DocumentoAdjunto = dto.DocumentosAdjuntos.Select(d => d.ToEntity()).ToList()
             };
         }
@@ -160,7 +155,7 @@ namespace SISTEMALEGAL.Models.Extensions
                 Resolucion = entity.Resolucion,
                 FechaCreacion = entity.FechaCreacion,
 
-                // ✅ Toma el primer representante/apoderado de la colección
+                // ✅ Toma solo el primer elemento si existe
                 RepresentanteLegal = entity.RepresentanteLegal?.FirstOrDefault()?.ToDto(),
                 ApoderadoLegal = entity.ApoderadoLegal?.FirstOrDefault()?.ToDto(),
 

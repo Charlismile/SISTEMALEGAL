@@ -28,8 +28,8 @@
                         <div class="col-md-6"><strong>Región de Salud:</strong> @comite.RegionSalud</div>
                         <div class="col-md-6"><strong>Comunidad:</strong> @comite.Comunidad</div>
                         <div class="col-md-6"><strong>Tipo de Trámite:</strong> @comite.TipoTramite</div>
-                        <div class="col-md-6"><strong>Fecha de Elección:</strong> @(comite.FechaEleccion?.ToString("dd/MM/yyyy"))</div>
-                        <div class="col-md-6"><strong>Fecha de Creación:</strong> @(comite.FechaCreacion?.ToString("dd/MM/yyyy"))</div>
+                        <div class="col-md-6"><strong>Fecha de Elección:</strong> @(comite.FechaEleccion.ToString("dd/MM/yyyy"))</div>
+                        <div class="col-md-6"><strong>Fecha de Creación:</strong> @(comite.FechaCreacion.ToString("dd/MM/yyyy"))</div>
                     </div>
 
                     @if (comite.Miembros is not null && comite.Miembros.Any())

@@ -59,7 +59,7 @@ public partial class DbContextSisLegal : DbContext
             entity.Property(e => e.FechaSubida).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.NombreOriginal).HasMaxLength(255);
             entity.Property(e => e.RutaArchivo).HasMaxLength(512);
-            entity.Property(e => e.TipoDocumento).HasMaxLength(50);
+            entity.Property(e => e.TipoDocumento).HasMaxLength(100);
             entity.Property(e => e.UsuarioId).HasMaxLength(450);
 
             entity.HasOne(d => d.RegistroAsociacion).WithMany(p => p.DocumentoAdjunto)
@@ -104,21 +104,21 @@ public partial class DbContextSisLegal : DbContext
 
             entity.Property(e => e.ActividadSalud).HasMaxLength(255);
             entity.Property(e => e.Asociacion).HasMaxLength(255);
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<RegistroComite>(entity =>
         {
-            entity.HasIndex(e => e.Distrito, "IX_RegistroComite_Distrito");
-
-            entity.HasIndex(e => e.Provincia, "IX_RegistroComite_Provincia");
-
             entity.Property(e => e.ComiteSalud).HasMaxLength(255);
             entity.Property(e => e.Comunidad).HasMaxLength(255);
-            entity.Property(e => e.Corregimiento).HasMaxLength(100);
-            entity.Property(e => e.Distrito).HasMaxLength(100);
-            entity.Property(e => e.FechaCreacion).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Provincia).HasMaxLength(100);
-            entity.Property(e => e.RegionSalud).HasMaxLength(100);
+            entity.Property(e => e.Corregimiento).HasMaxLength(255);
+            entity.Property(e => e.Distrito).HasMaxLength(255);
+            entity.Property(e => e.FechaCreacion)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.FechaEleccion).HasColumnType("datetime");
+            entity.Property(e => e.Provincia).HasMaxLength(255);
+            entity.Property(e => e.RegionSalud).HasMaxLength(255);
             entity.Property(e => e.TipoTramite).HasMaxLength(50);
         });
 

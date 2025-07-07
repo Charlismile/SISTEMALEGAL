@@ -41,8 +41,8 @@ namespace SISTEMALEGAL.Services
             entity.Provincia = dto.Provincia;
             entity.RegionSalud = dto.RegionSalud;
             entity.TipoTramite = dto.TipoTramite;
-            entity.FechaEleccion = dto.FechaEleccion;
-            entity.FechaCreacion = dto.FechaCreacion;
+            entity.FechaEleccion = (DateTime)dto.FechaEleccion;
+            entity.FechaCreacion = (DateTime)dto.FechaCreacion;
 
             // Limpiar y reemplazar miembros
             _context.MiembroComite.RemoveRange(entity.MiembroComite);
