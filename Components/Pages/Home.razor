@@ -1,48 +1,90 @@
 ﻿@page "/"
-@using Microsoft.AspNetCore.Components.Web
 
-<PageTitle>Inicio</PageTitle>
+<PageTitle>Sistema Legal - Inicio</PageTitle>
 
-<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+<div class="min-vh-100 d-flex align-items-center bg-light">
     <div class="container py-5">
-        <h2 class="text-center mb-5 display-6 fw-semibold text-info">Seleccione el tipo de organización</h2>
+        <div class="text-center mb-5">
+            <img src="/images/logo-sistema-legal.png" alt="Logo" class="mb-4" style="height: 80px;">
+            <h1 class="display-5 fw-bold text-primary">Sistema de Asesoría Legal</h1>
+            <p class="lead text-muted">Registro de organizaciones comunitarias y sin fines de lucro</p>
+        </div>
 
-        <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center">
-            <!-- Card Comite -->
+        <div class="row row-cols-1 row-cols-lg-2 g-4 justify-content-center">
+            <!-- Card Comité -->
             <div class="col">
-                <div class="card h-100 border-success shadow-sm">
-                    <div class="card-header bg-success text-white text-center py-3">
-                        <h4 class="mb-0">Comité</h4>
+                <div class="card h-100 border-start border-5 border-success shadow">
+                    <div class="card-header bg-white py-3">
+                        <h4 class="mb-0 text-success">
+                            <i class="bi bi-people-fill me-2"></i>Comité de Salud
+                        </h4>
                     </div>
-                    <div class="card-body d-flex flex-column text-center">
-                        <h5 class="card-title mb-3">Comité <small class="text-muted">de Salud</small></h5>
-                        <i class="bi bi-people-fill display-4 text-success mb-3"></i>
+                    <div class="card-body d-flex flex-column text-center py-4">
+                        <div class="mb-3">
+                            <i class="bi bi-heart-pulse display-4 text-success"></i>
+                        </div>
                         <p class="card-text flex-grow-1">
-                            Grupo de personas, usualmente residentes de una comunidad, que se organizan para promover, orientar,
-                            planificar, implementar y evaluar programas de salud pública.
+                            Grupo organizado para promover programas de salud pública en comunidades locales.
                         </p>
-                        <a class="btn btn-success mt-3 w-100" href="/registrar-comite">Registrar</a>
+                        <div class="mt-auto">
+                            <a class="btn btn-success w-100 py-2 fw-semibold" href="/registrar-comite">
+                                Registrar Comité
+                                <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Card Asociacion -->
+            <!-- Card Asociación -->
             <div class="col">
-                <div class="card h-100 border-info shadow-sm">
-                    <div class="card-header bg-info text-white text-center py-3">
-                        <h4 class="mb-0">Asociación</h4>
+                <div class="card h-100 border-start border-5 border-primary shadow">
+                    <div class="card-header bg-white py-3">
+                        <h4 class="mb-0 text-primary">
+                            <i class="bi bi-building me-2"></i>Asociación Sin Fines de Lucro
+                        </h4>
                     </div>
-                    <div class="card-body d-flex flex-column text-center">
-                        <h5 class="card-title mb-3">Asociación <small class="text-muted">Sin Fines de Lucro</small></h5>
-                        <i class="bi bi-people display-4 text-info mb-3"></i>
+                    <div class="card-body d-flex flex-column text-center py-4">
+                        <div class="mb-3">
+                            <i class="bi bi-shield-check display-4 text-primary"></i>
+                        </div>
                         <p class="card-text flex-grow-1">
-                            Entidad legal que se crea con el objetivo de realizar actividades de beneficio social o interés público,
-                            sin la intención de generar ganancias para distribuir entre sus miembros.
+                            Entidad legal para actividades de beneficio social sin distribución de ganancias.
                         </p>
-                        <a class="btn btn-info mt-3 w-100" href="/registrar-asociacion">Registrar</a>
+                        <div class="mt-auto">
+                            <a class="btn btn-primary w-100 py-2 fw-semibold" href="/registrar-asociacion">
+                                Registrar Asociación
+                                <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="text-center mt-5 pt-4">
+            <p class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Acceso exclusivo para usuarios autorizados
+                <a href="/login" class="text-decoration-none ms-2">Iniciar sesión</a>
+            </p>
+        </div>
     </div>
 </div>
+
+<style>
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-radius: 0.75rem;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header {
+        border-bottom: none;
+        border-radius: 0.75rem 0.75rem 0 0 !important;
+    }
+</style>

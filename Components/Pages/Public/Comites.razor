@@ -1,115 +1,115 @@
-﻿@page "/comites"
-@using SISTEMALEGAL.Models.DTOs
-@using SISTEMALEGAL.Services.Interfaces
-@inject IComiteRepository ComiteRepo
-@inject IJSRuntime JS
-@inject NavigationManager NavManager
-
-<PageTitle>Listado de Comités</PageTitle>
-
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="mb-0 text-primary">Listado de Comités</h3>
-        <a href="/registrar-comite" class="btn btn-success">
-            <i class="bi bi-plus-lg me-1"></i> Nuevo Comité
-        </a>
-    </div>
-
-    @if (comites == null)
-    {
-        <div class="text-center text-muted">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-3">Cargando datos...</p>
-        </div>
-    }
-    else if (!comites.Any())
-    {
-        <div class="alert alert-info text-center">No hay comités registrados aún.</div>
-    }
-    else
-    {
-        <div class="table-responsive">
-            <table class="table table-hover align-middle border shadow-sm rounded-3 overflow-hidden">
-                <thead class="table-light">
-                    <tr>
-                        <th>Nombre del Comité</th>
-                        <th>Provincia</th>
-                        <th>Tipo de Trámite</th>
-                        <th>Creación</th>
-                        <th>Miembros</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in comites)
-                    {
-                        <tr>
-                            <td>@item.ComiteSalud</td>
-                            <td>@item.Provincia</td>
-                            <td>@item.TipoTramite</td>
-                            <td>@item.FechaCreacion.ToShortDateString()</td>
-                            <td>
-                                @if (item.Miembros?.Any() == true)
-                                {
-                                    <ul class="list-unstyled mb-0 small">
-                                        @foreach (var miembro in item.Miembros.Take(2))
-                                        {
-                                            <li>@miembro.Nombre (@miembro.Cargo)</li>
-                                        }
-                                        @if (item.Miembros.Count > 2)
-                                        {
-                                            <li>y @(item.Miembros.Count - 2) más...</li>
-                                        }
-                                    </ul>
-                                }
-                                else
-                                {
-                                    <small class="text-muted">Sin miembros</small>
-                                }
-                            </td>
-                            <td class="text-center">
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary" title="Ver"
-                                            @onclick="() => VerDetalles(item.Id)">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-outline-secondary" title="Editar"
-                                            @onclick="() => Editar(item.Id)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-outline-danger" title="Eliminar"
-                                            @onclick="() => Eliminar(item.Id)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
-
-@code {
-    private List<ComiteDto> comites = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        comites = await ComiteRepo.GetAllAsync();
-    }
-
-    private void VerDetalles(int id) => NavManager.NavigateTo($"/comite/{id}");
-    private void Editar(int id) => NavManager.NavigateTo($"/editar-comite/{id}");
-
-    private async Task Eliminar(int id)
-    {
-        bool confirmado = await JS.InvokeAsync<bool>("confirm", "¿Estás seguro de eliminar este comité?");
-        if (confirmado)
-        {
-            await ComiteRepo.DeleteAsync(id);
-            comites.RemoveAll(c => c.Id == id);
-            StateHasChanged();
-        }
-    }
-}
+﻿@* @page "/comites" *@
+@* @using SISTEMALEGAL.Models.DTOs *@
+@* @using SISTEMALEGAL.Services.Interfaces *@
+@* @inject IRegistroComiteRepository RegistroComiteRepo *@
+@* @inject IJSRuntime JS *@
+@* @inject NavigationManager NavManager *@
+@* *@
+@* <PageTitle>Listado de Comités</PageTitle> *@
+@* *@
+@* <div class="container py-5"> *@
+@*     <div class="d-flex justify-content-between align-items-center mb-4"> *@
+@*         <h3 class="mb-0 text-primary">Listado de Comités</h3> *@
+@*         <a href="/registrar-comite" class="btn btn-success"> *@
+@*             <i class="bi bi-plus-lg me-1"></i> Nuevo Comité *@
+@*         </a> *@
+@*     </div> *@
+@* *@
+@*     @if (comites == null) *@
+@*     { *@
+@*         <div class="text-center text-muted"> *@
+@*             <div class="spinner-border text-primary" role="status"></div> *@
+@*             <p class="mt-3">Cargando datos...</p> *@
+@*         </div> *@
+@*     } *@
+@*     else if (!comites.Any()) *@
+@*     { *@
+@*         <div class="alert alert-info text-center">No hay comités registrados aún.</div> *@
+@*     } *@
+@*     else *@
+@*     { *@
+@*         <div class="table-responsive"> *@
+@*             <table class="table table-hover align-middle border shadow-sm rounded-3 overflow-hidden"> *@
+@*                 <thead class="table-light"> *@
+@*                     <tr> *@
+@*                         <th>Nombre del Comité</th> *@
+@*                         <th>Provincia</th> *@
+@*                         <th>Tipo de Trámite</th> *@
+@*                         <th>Creación</th> *@
+@*                         <th>Miembros</th> *@
+@*                         <th class="text-center">Acciones</th> *@
+@*                     </tr> *@
+@*                 </thead> *@
+@*                 <tbody> *@
+@*                     @foreach (var item in comites) *@
+@*                     { *@
+@*                         <tr> *@
+@*                             <td>@item.RegistroComiteSalud</td> *@
+@*                             <td>@item.Provincia</td> *@
+@*                             <td>@item.TipoTramite</td> *@
+@*                             <td>@item.FechaCreacion.ToShortDateString()</td> *@
+@*                             <td> *@
+@*                                 @if (item.Miembros?.Any() == true) *@
+@*                                 { *@
+@*                                     <ul class="list-unstyled mb-0 small"> *@
+@*                                         @foreach (var miembro in item.Miembros.Take(2)) *@
+@*                                         { *@
+@*                                             <li>@miembro.Nombre (@miembro.Cargo)</li> *@
+@*                                         } *@
+@*                                         @if (item.Miembros.Count > 2) *@
+@*                                         { *@
+@*                                             <li>y @(item.Miembros.Count - 2) más...</li> *@
+@*                                         } *@
+@*                                     </ul> *@
+@*                                 } *@
+@*                                 else *@
+@*                                 { *@
+@*                                     <small class="text-muted">Sin miembros</small> *@
+@*                                 } *@
+@*                             </td> *@
+@*                             <td class="text-center"> *@
+@*                                 <div class="btn-group btn-group-sm"> *@
+@*                                     <button class="btn btn-outline-primary" title="Ver" *@
+@*                                             @onclick="() => VerDetalles(item.Id)"> *@
+@*                                         <i class="bi bi-eye"></i> *@
+@*                                     </button> *@
+@*                                     <button class="btn btn-outline-secondary" title="Editar" *@
+@*                                             @onclick="() => Editar(item.Id)"> *@
+@*                                         <i class="bi bi-pencil"></i> *@
+@*                                     </button> *@
+@*                                     <button class="btn btn-outline-danger" title="Eliminar" *@
+@*                                             @onclick="() => Eliminar(item.Id)"> *@
+@*                                         <i class="bi bi-trash"></i> *@
+@*                                     </button> *@
+@*                                 </div> *@
+@*                             </td> *@
+@*                         </tr> *@
+@*                     } *@
+@*                 </tbody> *@
+@*             </table> *@
+@*         </div> *@
+@*     } *@
+@* </div> *@
+@* *@
+@* @code { *@
+@*     private List<RegistroComiteDto> comites = new(); *@
+@* *@
+@*     protected override async Task OnInitializedAsync() *@
+@*     { *@
+@*         comites = await RegistroComiteRepo.GetAllAsync(); *@
+@*     } *@
+@* *@
+@*     private void VerDetalles(int id) => NavManager.NavigateTo($"/comite/{id}"); *@
+@*     private void Editar(int id) => NavManager.NavigateTo($"/editar-comite/{id}"); *@
+@* *@
+@*     private async Task Eliminar(int id) *@
+@*     { *@
+@*         bool confirmado = await JS.InvokeAsync<bool>("confirm", "¿Estás seguro de eliminar este comité?"); *@
+@*         if (confirmado) *@
+@*         { *@
+@*             await RegistroComiteRepo.DeleteAsync(id); *@
+@*             comites.RemoveAll(c => c.Id == id); *@
+@*             StateHasChanged(); *@
+@*         } *@
+@*     } *@
+@* } *@

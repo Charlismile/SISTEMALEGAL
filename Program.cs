@@ -1,3 +1,5 @@
+
+using LegalSystem.Server.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -5,13 +7,10 @@ using SISTEMALEGAL.Components;
 using SISTEMALEGAL.Components.Account;
 using SISTEMALEGAL.Data;
 using SISTEMALEGAL.Models.Entities.BdSisLegal;
-using SISTEMALEGAL.Models.Entities.BDUbicaciones;
-using SISTEMALEGAL.Repositories.Implementations;
 using SISTEMALEGAL.Repositories.Interfaces;
-using SISTEMALEGAL.Repositories.Services;
-using SISTEMALEGAL.Services;
-using SISTEMALEGAL.Services.Implementations;
-using SISTEMALEGAL.Services.Interfaces;
+
+using Microsoft.AspNetCore.Identity.UI.Services;
+using SISTEMALEGAL.Repositories.Services; // Añadir esta referencia
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,42 +18,42 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped<IUbicacionService, UbicacionService>();
-builder.Services.AddScoped<ComiteService>();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-builder.Services.AddBlazorBootstrap();
-builder.Services.AddScoped<IComiteRepository, ComiteRepository>();
-builder.Services.AddScoped<IAsociacionRepository, AsociacionRepository>();
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
-builder.Services.AddScoped<IDatabaseProvider, DatabaseProviderService>();
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
+.AddIdentityCookies();
+
+// Configuración de la base de datos
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+
+builder.Services.AddDbContext<DbContextLegal>(options =>
     options.UseSqlServer(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-builder.Services.AddDbContext<DbContextSisLegal>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<DbUbicacionPanama>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("UbicacionConnection")));
-builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddSignInManager()
-    .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<IRegistroComiteService, RegistroComiteService>();
+builder.Services.AddScoped<IRegistroAsociacionService, RegistroAsociacionService>();
+builder.Services.AddScoped<ICatalogoService, CatalogoService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IHistorialService, HistorialService>();
+builder.Services.AddScoped<IArchivoService, ArchivoService>();
+
+// Componentes Razor
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor().AddHubOptions(options =>
 {
     options.MaximumReceiveMessageSize = 10 * 1024 * 1024; // 10 MB
 });
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+// Servidor de archivos estáticos
+builder.Services.AddBlazorBootstrap();
 
 var app = builder.Build();
 
@@ -66,19 +65,17 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-// Add additional endpoints required by the Identity /Account Razor components.
+// Mapea endpoints de identidad
 app.MapAdditionalIdentityEndpoints();
 
 app.Run();

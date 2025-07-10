@@ -1,197 +1,222 @@
 ﻿@page "/registrar-asociacion"
-@using Microsoft.AspNetCore.Components.Web
-@using SISTEMALEGAL.Models.DTOs
-@using SISTEMALEGAL.Services.Interfaces
-@inject IAsociacionRepository AsociacionRepo
-@inject NavigationManager NavManager
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using LegalSystem.Server.Services
+@using SISTEMALEGAL.DTOs
+@using SISTEMALEGAL.Repositories.Interfaces
+@inject IRegistroAsociacionService RegistroAsociacionService
+@inject NavigationManager Nav
+@attribute [Authorize]
 
-<PageTitle>Nueva Asociación</PageTitle>
+<PageTitle>Registrar Asociación</PageTitle>
 
-<div class="container mt-4">
-    <div class="card shadow-sm border-0 rounded-3">
-        <div class="card-header bg-success text-white rounded-top">
-            <h4 class="mb-0">Registro de Asociación</h4>
-        </div>
-        <div class="card-body">
+<div class="container py-4">
+    <h2 class="mb-4 text-primary">
+        <i class="bi bi-building me-2"></i>Registro de Asociación Sin Fines de Lucro
+    </h2>
 
-            <EditForm Model="@dto" OnValidSubmit="Guardar">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
+    <EditForm Model="@Model" OnValidSubmit="RegistrarAsociacion">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-                <!-- Datos básicos -->
+        <!-- Información de la Asociación -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="bi bi-info-circle me-2"></i>Información de la Asociación</h5>
+            </div>
+            <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Nombre de la Asociación</label>
-                        <InputText @bind-Value="dto.Asociacion" class="form-control" />
-                        <ValidationMessage For="@(() => dto.Asociacion)" />
+                        <InputText class="form-control" @bind-Value="Model.NombreAsociacion" />
+                        <ValidationMessage For="@(() => Model.NombreAsociacion)" />
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Actividad de Salud</label>
-                        <InputText @bind-Value="dto.ActividadSalud" class="form-control" />
-                    </div>
-                </div>
-
-                <!-- Información adicional -->
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Tomo</label>
-                        <InputNumber @bind-Value="dto.Tomo" class="form-control" />
-                    </div>
-                    <div class="col-md-3">
                         <label class="form-label">Folio</label>
-                        <InputNumber @bind-Value="dto.Folio" class="form-control" />
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Asiento</label>
-                        <InputNumber @bind-Value="dto.Asiento" class="form-control" />
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Fecha de Creación</label>
-                        <InputDate @bind-Value="dto.FechaCreacion" class="form-control" />
-                        <ValidationMessage For="@(() => dto.FechaCreacion)" />
+                        <InputNumber class="form-control" @bind-Value="Model.Folio" />
+                        <ValidationMessage For="@(() => Model.Folio)" />
                     </div>
                 </div>
 
-                <!-- Resolución -->
                 <div class="mb-3">
-                    <label class="form-label">Resolución</label>
-                    <InputTextArea @bind-Value="dto.Resolucion" class="form-control" rows="3" />
+                    <label class="form-label">Actividad Principal</label>
+                    <InputTextArea class="form-control" @bind-Value="Model.Actividad" rows="3" />
+                    <ValidationMessage For="@(() => Model.Actividad)" />
                 </div>
-
-                <!-- Selección geográfica -->
-                <SelectRegionForm Dto="@ubicacion" DtoChanged="OnUbicacionCambiada" />
-
-                <!-- Representante Legal -->
-                <div class="card mt-3 mb-3">
-                    <div class="card-header bg-info text-white">Representante Legal</div>
-                    <div class="card-body">
-                        <div class="row g-2">
-                            <div class="col-md-6">
-                                <InputText @bind-Value="dto.RepresentanteLegal.Nombre" placeholder="Nombre" class="form-control" />
-                            </div>
-                            <div class="col-md-6">
-                                <InputText @bind-Value="dto.RepresentanteLegal.Cedula" placeholder="Cédula" class="form-control" />
-                            </div>
-                            <div class="col-md-6 mt-2">
-                                <InputText @bind-Value="dto.RepresentanteLegal.Cargo" placeholder="Cargo" class="form-control" />
-                            </div>
-                            <div class="col-md-6 mt-2">
-                                <InputText @bind-Value="dto.RepresentanteLegal.Telefono" placeholder="Teléfono" class="form-control" />
-                            </div>
-                            <div class="col-md-12 mt-2">
-                                <InputText @bind-Value="dto.RepresentanteLegal.Direccion" placeholder="Dirección" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Apoderado Legal -->
-                <div class="card mt-3 mb-3">
-                    <div class="card-header bg-warning text-dark">Apoderado Legal</div>
-                    <div class="card-body">
-                        <div class="row g-2">
-                            <div class="col-md-6">
-                                <InputText @bind-Value="dto.ApoderadoLegal.Nombre" placeholder="Nombre" class="form-control" />
-                            </div>
-                            <div class="col-md-6">
-                                <InputText @bind-Value="dto.ApoderadoLegal.Cedula" placeholder="Cédula" class="form-control" />
-                            </div>
-                            <div class="col-md-6 mt-2">
-                                <InputText @bind-Value="dto.ApoderadoLegal.Email" placeholder="Email" class="form-control" />
-                            </div>
-                            <div class="col-md-6 mt-2">
-                                <InputText @bind-Value="dto.ApoderadoLegal.Telefono" placeholder="Teléfono" class="form-control" />
-                            </div>
-                            <div class="col-md-12 mt-2">
-                                <InputText @bind-Value="dto.ApoderadoLegal.Direccion" placeholder="Dirección" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Documentos Adjuntos -->
-                <div class="mb-3">
-                    <label>Cargar Documentos</label>
-                    <InputFile multiple OnChange="CargarArchivos" />
-
-                    @if (archivos.Any())
-                    {
-                        <ul class="mt-2 list-group list-group-flush">
-                            @foreach (var file in archivos)
-                            {
-                                <li class="list-group-item">@file.Name (@file.Size KB)</li>
-                            }
-                        </ul>
-                    }
-                </div>
-
-                <!-- Botones -->
-                <div class="text-end mt-3">
-                    <button type="submit" class="btn btn-success me-2">Guardar Asociación</button>
-                    <button type="button" class="btn btn-secondary" @onclick="Regresar">Regresar</button>
-                </div>
-            </EditForm>
+            </div>
         </div>
-    </div>
+
+        <!-- Representante Legal -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5><i class="bi bi-person-badge me-2"></i>Representante Legal</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nombre Completo</label>
+                        <InputText class="form-control" @bind-Value="Model.Representante.NombreRepLegal" />
+                        <ValidationMessage For="@(() => Model.Representante.NombreRepLegal)" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Cédula</label>
+                        <InputText class="form-control" @bind-Value="Model.Representante.CedulaRepLegal" />
+                        <ValidationMessage For="@(() => Model.Representante.CedulaRepLegal)" />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Cargo</label>
+                        <InputText class="form-control" @bind-Value="Model.Representante.CargoRepLegal" />
+                        <ValidationMessage For="@(() => Model.Representante.CargoRepLegal)" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Teléfono</label>
+                        <InputText class="form-control" @bind-Value="Model.Representante.TelefonoRepLegal" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Dirección</label>
+                    <InputTextArea class="form-control" @bind-Value="Model.Representante.DireccionRepLegal" rows="2" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Apoderado Legal -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5><i class="bi bi-person-check me-2"></i>Apoderado Legal</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nombre Completo</label>
+                        <InputText class="form-control" @bind-Value="Model.Apoderado.NombreApoAbogado" />
+                        <ValidationMessage For="@(() => Model.Apoderado.NombreApoAbogado)" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Cédula</label>
+                        <InputText class="form-control" @bind-Value="Model.Apoderado.CedulaApoAbogado" />
+                        <ValidationMessage For="@(() => Model.Apoderado.CedulaApoAbogado)" />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Teléfono</label>
+                        <InputText class="form-control" @bind-Value="Model.Apoderado.TelefonoApoAbogado" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Correo Electrónico</label>
+                        <InputText class="form-control" @bind-Value="Model.Apoderado.CorreoApoAbogado" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Dirección</label>
+                    <InputTextArea class="form-control" @bind-Value="Model.Apoderado.DireccionApoAbogado" rows="2" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-secondary" @onclick="Cancelar">
+                Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" disabled="@isProcessing">
+                @if (isProcessing)
+                {
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                    <span> Procesando...</span>
+                }
+                else
+                {
+                    <span>Registrar Asociación</span>
+                }
+            </button>
+        </div>
+    </EditForm>
 </div>
 
+@if (!string.IsNullOrEmpty(resultado.Mensaje))
+{
+    <div class="alert @(resultado.Exito ? "alert-success" : "alert-danger") mt-3">
+        @resultado.Mensaje
+        @if (resultado.Errores.Any())
+        {
+            <ul>
+                @foreach (var error in resultado.Errores)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+        }
+    </div>
+}
+
 @code {
-    private RegistroAsociacionDto dto = new()
+    private RegistroAsociacionDTO Model { get; set; } = new();
+    private bool isProcessing = false;
+    private ResultadoOperacion<int>? resultado;
+
+    protected override void OnInitialized()
     {
-        RepresentanteLegal = new(),
-        ApoderadoLegal = new()
-    };
-
-    private UbicacionDto ubicacion = new();
-
-    private List<IBrowserFile> archivos = new();
-
-    private void Regresar()
-    {
-        NavManager.NavigateTo("/asociaciones");
+        // Inicializa los objetos anidados
+        Model.Representante = new RepresentanteLegalDTO();
+        Model.Apoderado = new ApoderadoLegalDTO();
     }
 
-    private async Task CargarArchivos(InputFileChangeEventArgs e)
+    private async Task RegistrarAsociacion()
     {
-        foreach (var file in e.GetMultipleFiles())
+        isProcessing = true;
+        var userId = await ObtenerUsuarioId();
+
+        try
         {
-            var nombreUnico = Guid.NewGuid() + Path.GetExtension(file.Name);
-            var rutaRelativa = $"/archivos/asociaciones/resoluciones/{nombreUnico}";
-            var fullPath = Path.Combine("wwwroot", "archivos", "asociaciones", "resoluciones", nombreUnico);
+            var respuesta = await AsociacionService.RegistrarAsociacion(Model, userId);
 
-            using var stream = new FileStream(fullPath, FileMode.Create);
-            await file.OpenReadStream().CopyToAsync(stream);
-
-            dto.DocumentosAdjuntos.Add(new DocumentoAdjuntoDto
+            if (respuesta.Exito)
             {
-                NombreOriginal = file.Name,
-                RutaArchivo = rutaRelativa,
-                TipoDocumento = "Resolución",
-                FechaSubida = DateTime.Now
-            });
+                Nav.NavigateTo($"/registro-exitoso?tipo=asociacion&id={respuesta.Data}");
+            }
+            else
+            {
+                resultado = respuesta;
+            }
         }
-    }
-
-    private async Task Guardar()
-    {
-        // Asigna datos geográficos
-        // dto.RegionSalud = ubicacion.RegionSalud;
-        // dto.Provincia = ubicacion.Provincia;
-        // dto.Distrito = ubicacion.Distrito;
-        // dto.Corregimiento = ubicacion.Corregimiento;
-
-        if (!dto.FechaCreacion.HasValue)
+        catch (Exception ex)
         {
-            // Mostrar mensaje de error
-            return;
+            resultado = new ResultadoOperacion<int>
+            {
+                Exito = false,
+                Mensaje = "Error al registrar la asociación",
+                Errores = new List<string> { ex.Message }
+            };
         }
-
-        await AsociacionRepo.CreateAsync(dto);
-        NavManager.NavigateTo("/asociaciones");
+        finally
+        {
+            isProcessing = false;
+        }
     }
 
-    private void OnUbicacionCambiada(UbicacionDto nueva)
+    private async Task<string> ObtenerUsuarioId()
     {
-        ubicacion = nueva;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            return user.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+
+        throw new UnauthorizedAccessException("Usuario no autenticado");
+    }
+
+    private void Cancelar()
+    {
+        Nav.NavigateTo("/");
     }
 }

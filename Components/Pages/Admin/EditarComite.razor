@@ -1,140 +1,140 @@
-﻿@page "/editar-comite/{id:int}"
-@using SISTEMALEGAL.Models.DTOs
-@using SISTEMALEGAL.Services.Interfaces
-@inject IComiteRepository ComiteRepository
-@inject NavigationManager NavManager
-
-<PageTitle>Editar Comité</PageTitle>
-
-<div class="container py-5">
-    <div class="mx-auto col-lg-8">
-        <h2 class="text-center mb-4 text-warning">Editar Comité de Salud</h2>
-
-        <EditForm Model="@comite" OnValidSubmit="Guardar">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" />
-
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Nombre del Comité</label>
-                    <InputText @bind-Value="comite.ComiteSalud" class="form-control" />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Provincia</label>
-                    <InputText @bind-Value="comite.Provincia" class="form-control" />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Tipo de Trámite</label>
-                    <InputSelect @bind-Value="comite.TipoTramite" class="form-select" @onchange="OnTipoTramiteChanged">
-                        <option value="">Selecciona</option>
-                        <option value="Personería">Personería</option>
-                        <option value="Cambio Junta Directiva">Cambio Junta Directiva</option>
-                        <option value="Junta Interventora">Junta Interventora</option>
-                    </InputSelect>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Fecha de Creación</label>
-                    <InputDate @bind-Value="comite.FechaCreacion" class="form-control" />
-                </div>
-            </div>
-
-            <hr />
-            <h5 class="text-success">Miembros del Comité</h5>
-            @foreach (var miembro in comite.Miembros)
-            {
-                <div class="row g-2 mb-2">
-                    <div class="col-md-4">
-                        <InputText @bind-Value="miembro.Nombre" placeholder="Nombre" class="form-control" />
-                    </div>
-                    <div class="col-md-4">
-                        <InputText @bind-Value="miembro.Cedula" placeholder="Cédula" class="form-control" />
-                    </div>
-                    <div class="col-md-4">
-                        <InputText @bind-Value="miembro.Cargo" placeholder="Cargo" class="form-control" />
-                    </div>
-                </div>
-            }
-            <button type="button" class="btn btn-outline-primary btn-sm mb-3" @onclick="AgregarMiembro">+ Agregar Miembro</button>
-
-            @if (comite.TipoTramite == "Junta Interventora")
-            {
-                <hr />
-                <h5 class="text-warning">Junta Interventora (máximo 2)</h5>
-                @for (int i = 0; i < comite.JuntaInterventoras.Count; i++)
-                {
-                    <div class="row g-2 mb-2">
-                        <div class="col-md-6">
-                            <InputText @bind-Value="comite.JuntaInterventoras[i].Nombre" placeholder="Nombre" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <InputText @bind-Value="comite.JuntaInterventoras[i].Cedula" placeholder="Cédula" class="form-control" />
-                        </div>
-                    </div>
-                }
-                <button type="button" class="btn btn-outline-warning btn-sm mb-3" @onclick="AgregarInterventor">+ Agregar Interventor</button>
-            }
-
-            <div class="text-end mt-4">
-                <button type="submit" class="btn btn-success me-2">Actualizar</button>
-                <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
-            </div>
-        </EditForm>
-    </div>
-</div>
-
-@code {
-    [Parameter] public int Id { get; set; }
-    private ComiteDto comite = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        comite = await ComiteRepository.GetByIdAsync(Id) ?? new();
-
-        if (comite.Id == 0)
-            NavManager.NavigateTo("/comites");
-
-        if (comite.Miembros == null || comite.Miembros.Count == 0)
-            comite.Miembros = new List<MiembroDto> { new() };
-
-        if (comite.TipoTramite == "Junta Interventora" && comite.JuntaInterventoras.Count == 0)
-            comite.JuntaInterventoras.Add(new JuntaInterventoraDto());
-    }
-
-    private void OnTipoTramiteChanged(ChangeEventArgs e)
-    {
-        comite.TipoTramite = e.Value?.ToString();
-
-        if (comite.TipoTramite == "Junta Interventora")
-        {
-            if (comite.JuntaInterventoras.Count == 0)
-                comite.JuntaInterventoras.Add(new JuntaInterventoraDto());
-        }
-        else
-        {
-            comite.JuntaInterventoras.Clear();
-        }
-    }
-
-    private void AgregarMiembro()
-    {
-        if (comite.Miembros.Count < 7)
-            comite.Miembros.Add(new MiembroDto());
-    }
-
-    private void AgregarInterventor()
-    {
-        if (comite.JuntaInterventoras.Count < 2)
-            comite.JuntaInterventoras.Add(new JuntaInterventoraDto());
-    }
-
-    private async Task Guardar()
-    {
-        await ComiteRepository.UpdateAsync(comite);
-        NavManager.NavigateTo("/comites");
-    }
-
-    private void Cancelar()
-    {
-        NavManager.NavigateTo("/comites");
-    }
-}
+﻿@* @page "/editar-comite/{id:int}" *@
+@* @using SISTEMALEGAL.Models.DTOs *@
+@* @using SISTEMALEGAL.Services.Interfaces *@
+@* @inject IRegistroComiteRepository RegistroComiteRepository *@
+@* @inject NavigationManager NavManager *@
+@* *@
+@* <PageTitle>Editar Comité</PageTitle> *@
+@* *@
+@* <div class="container py-5"> *@
+@*     <div class="mx-auto col-lg-8"> *@
+@*         <h2 class="text-center mb-4 text-warning">Editar Comité de Salud</h2> *@
+@* *@
+@*         <EditForm Model="@comite" OnValidSubmit="Guardar"> *@
+@*             <DataAnnotationsValidator /> *@
+@*             <ValidationSummary class="text-danger" /> *@
+@* *@
+@*             <div class="row g-3 mb-3"> *@
+@*                 <div class="col-md-6"> *@
+@*                     <label class="form-label">Nombre del Comité</label> *@
+@*                     <InputText @bind-Value="comite.RegistroComiteSalud" class="form-control" /> *@
+@*                 </div> *@
+@*                 <div class="col-md-6"> *@
+@*                     <label class="form-label">Provincia</label> *@
+@*                     <InputText @bind-Value="comite.Provincia" class="form-control" /> *@
+@*                 </div> *@
+@*                 <div class="col-md-6"> *@
+@*                     <label class="form-label">Tipo de Trámite</label> *@
+@*                     <InputSelect @bind-Value="comite.TipoTramite" class="form-select" @onchange="OnTipoTramiteChanged"> *@
+@*                         <option value="">Selecciona</option> *@
+@*                         <option value="Personería">Personería</option> *@
+@*                         <option value="Cambio Junta Directiva">Cambio Junta Directiva</option> *@
+@*                         <option value="Junta Interventora">Junta Interventora</option> *@
+@*                     </InputSelect> *@
+@*                 </div> *@
+@*                 <div class="col-md-6"> *@
+@*                     <label class="form-label">Fecha de Creación</label> *@
+@*                     <InputDate @bind-Value="comite.FechaCreacion" class="form-control" /> *@
+@*                 </div> *@
+@*             </div> *@
+@* *@
+@*             <hr /> *@
+@*             <h5 class="text-success">Miembros del Comité</h5> *@
+@*             @foreach (var miembro in comite.Miembros) *@
+@*             { *@
+@*                 <div class="row g-2 mb-2"> *@
+@*                     <div class="col-md-4"> *@
+@*                         <InputText @bind-Value="miembro.Nombre" placeholder="Nombre" class="form-control" /> *@
+@*                     </div> *@
+@*                     <div class="col-md-4"> *@
+@*                         <InputText @bind-Value="miembro.Cedula" placeholder="Cédula" class="form-control" /> *@
+@*                     </div> *@
+@*                     <div class="col-md-4"> *@
+@*                         <InputText @bind-Value="miembro.Cargo" placeholder="Cargo" class="form-control" /> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             } *@
+@*             <button type="button" class="btn btn-outline-primary btn-sm mb-3" @onclick="AgregarMiembro">+ Agregar Miembro</button> *@
+@* *@
+@*             @if (comite.TipoTramite == "Junta Interventora") *@
+@*             { *@
+@*                 <hr /> *@
+@*                 <h5 class="text-warning">Junta Interventora (máximo 2)</h5> *@
+@*                 @for (int i = 0; i < comite.JuntaInterventoras.Count; i++) *@
+@*                 { *@
+@*                     <div class="row g-2 mb-2"> *@
+@*                         <div class="col-md-6"> *@
+@*                             <InputText @bind-Value="comite.JuntaInterventoras[i].Nombre" placeholder="Nombre" class="form-control" /> *@
+@*                         </div> *@
+@*                         <div class="col-md-6"> *@
+@*                             <InputText @bind-Value="comite.JuntaInterventoras[i].Cedula" placeholder="Cédula" class="form-control" /> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                 } *@
+@*                 <button type="button" class="btn btn-outline-warning btn-sm mb-3" @onclick="AgregarInterventor">+ Agregar Interventor</button> *@
+@*             } *@
+@* *@
+@*             <div class="text-end mt-4"> *@
+@*                 <button type="submit" class="btn btn-success me-2">Actualizar</button> *@
+@*                 <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button> *@
+@*             </div> *@
+@*         </EditForm> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* @code { *@
+@*     [Parameter] public int Id { get; set; } *@
+@*     private RegistroComiteDto comite = new(); *@
+@* *@
+@*     protected override async Task OnInitializedAsync() *@
+@*     { *@
+@*         comite = await RegistroComiteRepository.GetByIdAsync(Id) ?? new(); *@
+@* *@
+@*         if (comite.Id == 0) *@
+@*             NavManager.NavigateTo("/comites"); *@
+@* *@
+@*         if (comite.Miembros == null || comite.Miembros.Count == 0) *@
+@*             comite.Miembros = new List<MiembroDto> { new() }; *@
+@* *@
+@*         if (comite.TipoTramite == "Junta Interventora" && comite.JuntaInterventoras.Count == 0) *@
+@*             comite.JuntaInterventoras.Add(new JuntaInterventoraDto()); *@
+@*     } *@
+@* *@
+@*     private void OnTipoTramiteChanged(ChangeEventArgs e) *@
+@*     { *@
+@*         comite.TipoTramite = e.Value?.ToString(); *@
+@* *@
+@*         if (comite.TipoTramite == "Junta Interventora") *@
+@*         { *@
+@*             if (comite.JuntaInterventoras.Count == 0) *@
+@*                 comite.JuntaInterventoras.Add(new JuntaInterventoraDto()); *@
+@*         } *@
+@*         else *@
+@*         { *@
+@*             comite.JuntaInterventoras.Clear(); *@
+@*         } *@
+@*     } *@
+@* *@
+@*     private void AgregarMiembro() *@
+@*     { *@
+@*         if (comite.Miembros.Count < 7) *@
+@*             comite.Miembros.Add(new MiembroDto()); *@
+@*     } *@
+@* *@
+@*     private void AgregarInterventor() *@
+@*     { *@
+@*         if (comite.JuntaInterventoras.Count < 2) *@
+@*             comite.JuntaInterventoras.Add(new JuntaInterventoraDto()); *@
+@*     } *@
+@* *@
+@*     private async Task Guardar() *@
+@*     { *@
+@*         await RegistroComiteRepository.UpdateAsync(comite); *@
+@*         NavManager.NavigateTo("/comites"); *@
+@*     } *@
+@* *@
+@*     private void Cancelar() *@
+@*     { *@
+@*         NavManager.NavigateTo("/comites"); *@
+@*     } *@
+@* } *@

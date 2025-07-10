@@ -1,214 +1,274 @@
 ﻿@page "/registrar-comite"
-@using Microsoft.AspNetCore.Components.Web
-@using SISTEMALEGAL.Components.Layout
-@using SISTEMALEGAL.Models.DTOs
-@using SISTEMALEGAL.Services.Interfaces
-@inject IComiteRepository ComiteRepo
-@inject NavigationManager NavManager
-@layout EmptyLayout
+@using Microsoft.AspNetCore.Authorization
+@using SISTEMALEGAL.DTOs
+@using SISTEMALEGAL.Models.Entities.BdSisLegal
+@using SISTEMALEGAL.Repositories.Interfaces
+@inject IRegistroComiteService RegistroService
+@inject NavigationManager Nav
+@attribute [Authorize]
 
-<PageTitle>Nuevo Comité</PageTitle>
+<PageTitle>Registrar Comité</PageTitle>
 
-<div class="container mt-4">
-    <div class="card shadow-sm border-0 rounded-3">
-        <div class="card-header bg-primary text-white rounded-top">
-            <h4 class="mb-0">Registro de Comité</h4>
+<h3 class="mb-4 text-primary">
+    <i class="bi bi-people-fill me-2"></i>Registro de Comité de Salud
+</h3>
+
+<EditForm Model="@Model" OnValidSubmit="RegistrarComite">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <!-- Información del Comité -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5><i class="bi bi-info-circle me-2"></i>Información del Comité</h5>
         </div>
         <div class="card-body">
-
-            <EditForm Model="@comite" OnValidSubmit="Guardar">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-
-                <!-- Datos principales -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Nombre del Comité</label>
-                        <InputText @bind-Value="comite.ComiteSalud" class="form-control" />
-                        <ValidationMessage For="@(() => comite.ComiteSalud)" />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Comunidad</label>
-                        <InputText @bind-Value="comite.Comunidad" class="form-control" />
-                    </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nombre del Comité</label>
+                    <InputText class="form-control" @bind-Value="Model.NombreComiteSalud" />
+                    <ValidationMessage For="@(() => Model.NombreComiteSalud)" />
                 </div>
-
-                <!-- Selección geográfica -->
-                <SelectRegionForm Dto="@ubicacion" />
-
-                <!-- Tipo de trámite -->
-                <div class="mb-3">
-                    <label class="form-label">Tipo de Trámite</label>
-                    <InputSelect @bind-Value="comite.TipoTramite" class="form-select">
-                        <option value="">Seleccione...</option>
-                        <option value="Personería">Personería</option>
-                        <option value="Cambio Junta Directiva">Cambio Junta Directiva</option>
-                        <option value="Junta Interventora">Junta Interventora</option>
-                    </InputSelect>
+                <div class="col-md-6">
+                    <label class="form-label">Comunidad</label>
+                    <InputText class="form-control" @bind-Value="Model.Comunidad" />
                 </div>
+            </div>
 
-                <!-- Fechas -->
-                <div class="mb-3">
-                    <label class="form-label">Fecha de Creación</label>
-                    <InputDate @bind-Value="comite.FechaCreacion" class="form-control" />
-                    <ValidationMessage For="@(() => comite.FechaCreacion)" />
-                </div>
-
-                @if (comite.TipoTramite == "Cambio Junta Directiva")
-                {
-                    <div class="mb-3">
-                        <label class="form-label">Fecha de Elección</label>
-                        <InputDate @bind-Value="comite.FechaEleccion" class="form-control" />
-                        <ValidationMessage For="@(() => comite.FechaEleccion)" />
-                    </div>
-                }
-
-                <!-- Miembros -->
-                <div class="mb-3">
-                    <label>Miembros</label>
-                    @foreach (var miembro in comite.Miembros)
-                    {
-                        <div class="row g-2 mb-2">
-                            <div class="col-md-4">
-                                <InputText @bind-Value="miembro.Nombre" placeholder="Nombre" class="form-control" />
-                            </div>
-                            <div class="col-md-4">
-                                <InputText @bind-Value="miembro.Cedula" placeholder="Cédula" class="form-control" />
-                            </div>
-                            <div class="col-md-3">
-                                <InputText @bind-Value="miembro.Cargo" placeholder="Cargo" class="form-control" />
-                            </div>
-                            <div class="col-md-1 d-flex align-items-end">
-                                <button type="button" class="btn btn-danger btn-sm" @onclick="() => comite.Miembros.Remove(miembro)">X</button>
-                            </div>
-                        </div>
-                    }
-                    <button type="button" class="btn btn-outline-primary btn-sm mt-2" @onclick="AgregarMiembro">+ Agregar Miembro</button>
-                </div>
-
-                <!-- Junta Interventora -->
-                @if (comite.MostrarJunta)
-                {
-                    <div class="mb-3">
-                        <label>Junta Interventora</label>
-                        @foreach (var junta in comite.JuntaInterventoras)
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label class="form-label">Región de Salud</label>
+                    <InputSelect class="form-select" @bind-Value="Model.RegionSaludId" 
+                                 @onchange="async () => await CargarProvincias()">
+                        <option value="0">Seleccionar...</option>
+                        @foreach (var region in Regiones)
                         {
-                            <div class="row g-2 mb-2">
-                                <div class="col-md-5">
-                                    <InputText @bind-Value="junta.Nombre" placeholder="Nombre" class="form-control" />
-                                </div>
-                                <div class="col-md-5">
-                                    <InputText @bind-Value="junta.Cedula" placeholder="Cédula" class="form-control" />
-                                </div>
-                                <div class="col-md-1 d-flex align-items-end">
-                                    <button type="button" class="btn btn-danger btn-sm" @onclick="() => comite.JuntaInterventoras.Remove(junta)">X</button>
-                                </div>
-                            </div>
+                            <option value="@region.RegionSaludId">@region.NombreRegion</option>
                         }
-                        <button type="button" class="btn btn-outline-warning btn-sm mt-2" @onclick="AgregarJunta">+ Agregar Interventor</button>
-                    </div>
-                }
-
-                <!-- Cargar documentos -->
-                <div class="mb-3">
-                    <label>Cargar Documentos</label>
-                    <InputFile multiple OnChange="CargarArchivos" />
-                    
-                    @if (archivos.Any())
-                    {
-                        <ul class="list-group list-group-flush mt-2">
-                            @foreach (var file in archivos)
-                            {
-                                <li class="list-group-item">@file.Name (@file.Size KB)</li>
-                            }
-                        </ul>
-                    }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => Model.RegionSaludId)" />
                 </div>
 
-                <button type="submit" class="btn btn-success mt-3">Guardar Comité</button>
-                <button type="button" class="btn btn-secondary ms-2 mt-3" @onclick="LimpiarCampos">Limpiar</button>
-            </EditForm>
+                <div class="col-md-3">
+                    <label class="form-label">Provincia</label>
+                    <InputSelect class="form-select" @bind-Value="Model.ProvinciaId" disabled="@(Provincias.Count == 0)"
+                                 @onchange="async () => await CargarDistritos()">
+                        <option value="0">Seleccionar...</option>
+                        @foreach (var provincia in Provincias)
+                        {
+                            <option value="@provincia.ProvinciaId">@provincia.NombreProvincia</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => Model.ProvinciaId)" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Distrito</label>
+                    <InputSelect class="form-select" @bind-Value="Model.DistritoId" disabled="@(Distritos.Count == 0)"
+                                 @onchange="async () => await CargarCorregimientos()">
+                        <option value="0">Seleccionar...</option>
+                        @foreach (var distrito in Distritos)
+                        {
+                            <option value="@distrito.DistritoId">@distrito.NombreDistrito</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => Model.DistritoId)" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Corregimiento</label>
+                    <InputSelect class="form-select" @bind-Value="Model.CorregimientoId" disabled="@(Corregimientos.Count == 0)">
+                        <option value="0">Seleccionar...</option>
+                        @foreach (var corregimiento in Corregimientos)
+                        {
+                            <option value="@corregimiento.CorregimientoId">@corregimiento.NombreCorregimiento</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => Model.CorregimientoId)" />
+                </div>
+            </div>
         </div>
     </div>
-    <div>
-        <button type="button" class="btn btn-secondary me-2" @onclick="Regresar">Regresar</button>
+
+    <!-- Miembros del Comité -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-person-lines-fill me-2"></i>Miembros del Comité</h5>
+                <button type="button" class="btn btn-sm btn-light" @onclick="AgregarMiembro">
+                    <i class="bi bi-plus-circle me-1"></i>Agregar Miembro
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            @for (int i = 0; i < Model.Miembros.Count; i++)
+            {
+                var miembro = Model.Miembros[i];
+                <div class="row mb-3 border-bottom pb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Nombre Completo</label>
+                        <InputText class="form-control" @bind-Value="miembro.NombreMiembro" />
+                        <ValidationMessage For="@(() => miembro.NombreMiembro)" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Cédula</label>
+                        <InputText class="form-control" @bind-Value="miembro.CedulaMiembro" />
+                        <ValidationMessage For="@(() => miembro.CedulaMiembro)" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Cargo</label>
+                        <InputSelect class="form-select" @bind-Value="miembro.CargoId">
+                            <option value="0">Seleccionar...</option>
+                            @foreach (var cargo in Cargos)
+                            {
+                                <option value="@cargo.CargoId">@cargo.NombreCargo</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => miembro.CargoId)" />
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger" 
+                            @onclick="() => EliminarMiembro(i)" 
+                            disabled="@(Model.Miembros.Count <= 1)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
-</div>
+
+    <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-secondary" onclick="Cancelar">
+            Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary" disabled="@isProcessing">
+            @if (isProcessing)
+            {
+                <span class="spinner-border spinner-border-sm" role="status"></span>
+                <span> Procesando...</span>
+            }
+            else
+            {
+                <span>Registrar Comité</span>
+            }
+        </button>
+    </div>
+</EditForm>
+
+@if (mensaje != null)
+{
+    <div class="alert @(mensaje.Exito ? "alert-success mt-3" : "alert-danger mt-3")">
+        @mensaje.Mensaje
+        @if (mensaje.Errores.Any())
+        {
+            <ul>
+                @foreach (var error in mensaje.Errores)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+        }
+    </div>
+}
 
 @code {
-    private ComiteDto comite = new();
-    private UbicacionDto ubicacion = new();
-    private List<IBrowserFile> archivos = new();
+    private RegistroComiteDTO Model = new();
+    private List<TbRegionSalud> Regiones { get; set; } = new();
+    private List<TbProvincia> Provincias { get; set; } = new();
+    private List<TbDistrito> Distritos { get; set; } = new();
+    private List<TbCorregimiento> Corregimientos { get; set; } = new();
+    private List<TbCargosMiembrosComite> Cargos { get; set; } = new();
 
-    protected override void OnInitialized()
+    private bool isProcessing = false;
+    private ResultadoOperacion<int>? mensaje;
+
+    protected override async Task OnInitializedAsync()
     {
-        // Puedes cargar datos si es edición
+        Regiones = (await RegistroService.ObtenerRegiones()).ToList();
+        // Cargos = await _context.TbCargosMiembrosComite.Where(c => c.IsActivo).ToListAsync();
+        Model.Miembros.Add(new MiembroComiteDTO());
+    }
+
+    private async Task CargarProvincias()
+    {
+        if (Model.RegionSaludId > 0)
+        {
+            Provincias = await RegistroService.ObtenerProvincias(Model.RegionSaludId);
+            Model.ProvinciaId = 0;
+            Distritos.Clear();
+            Corregimientos.Clear();
+        }
+    }
+
+    private async Task CargarDistritos()
+    {
+        if (Model.ProvinciaId > 0)
+        {
+            Distritos = await RegistroService.ObtenerDistritos(Model.ProvinciaId);
+            Model.DistritoId = 0;
+            Corregimientos.Clear();
+        }
+    }
+
+    private async Task CargarCorregimientos()
+    {
+        if (Model.DistritoId > 0)
+        {
+            Corregimientos = await RegistroService.ObtenerCorregimientos(Model.DistritoId);
+            Model.CorregimientoId = 0;
+        }
     }
 
     private void AgregarMiembro()
     {
-        if (comite.Miembros.Count < 7) // Máximo 7 miembros
-            comite.Miembros.Add(new MiembroDto());
+        Model.Miembros.Add(new MiembroComiteDTO());
     }
 
-    private void AgregarJunta()
+    private void EliminarMiembro(int index)
     {
-        if (comite.JuntaInterventoras.Count < 2) // Máximo 2 interventores
-            comite.JuntaInterventoras.Add(new JuntaInterventoraDto());
-    }
-
-    private async Task CargarArchivos(InputFileChangeEventArgs e)
-    {
-        foreach (var file in e.GetMultipleFiles())
+        if (Model.Miembros.Count > 1)
         {
-            var nombreUnico = Guid.NewGuid() + Path.GetExtension(file.Name);
-            var ruta = $"/archivos/comites/{nombreUnico}";
+            Model.Miembros.RemoveAt(index);
+        }
+    }
 
-            using var stream = new FileStream(Path.Combine("wwwroot", "archivos", "comites", nombreUnico), FileMode.Create);
-            await file.OpenReadStream().CopyToAsync(stream);
+    private async Task RegistrarComite()
+    {
+        mensaje = null;
+        isProcessing = true;
 
-            comite.DocumentosAdjuntos.Add(new DocumentoAdjuntoDto
+        try
+        {
+            var userId = await ObtenerUsuarioId();
+            mensaje = await RegistroService.RegistrarComite(Model, userId);
+
+            if (mensaje.Exito)
             {
-                NombreOriginal = file.Name,
-                RutaArchivo = ruta,
-                TipoDocumento = "Comité",
-                FechaSubida = DateTime.Now
-            });
+                Nav.NavigateTo("/gracias");
+            }
         }
-    }
-
-    private async Task Guardar()
-    {
-        // Asigna valores desde el componente de ubicación
-        comite.RegionSalud = ubicacion.RegionSalud;
-        comite.Provincia = ubicacion.Provincia;
-        comite.Distrito = ubicacion.Distrito;
-        comite.Corregimiento = ubicacion.Corregimiento;
-
-        // Valida fechas obligatorias
-        if (comite.FechaCreacion == null)
+        catch (Exception ex)
         {
-            // Mostrar mensaje de error
-            return;
+            mensaje = new ResultadoOperacion<int>
+            {
+                Exito = false,
+                Mensaje = "Error al registrar el comité",
+                Errores = new List<string> { ex.Message }
+            };
         }
-
-        if (comite.TipoTramite == "Cambio Junta Directiva" && comite.FechaEleccion == null)
+        finally
         {
-            // Mostrar mensaje de error
-            return;
+            isProcessing = false;
         }
-
-        await ComiteRepo.CreateAsync(comite);
-        NavManager.NavigateTo("/comites");
     }
 
-    private void LimpiarCampos()
+    private async Task<string> ObtenerUsuarioId()
     {
-        comite = new();
-        ubicacion = new();
-    }
-    private void Regresar()
-    {
-        NavManager.NavigateTo("/");
+        // var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        // var user = authState.User;
+        //
+        // return user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+        //        ?? throw new UnauthorizedAccessException("Usuario no autenticado");
     }
 }
